@@ -18,7 +18,7 @@ from _types import HypixelPlayer, HypixelSocialMedia
 load_dotenv()
 
 class FarmingCouncil(commands.Bot):
-    API_KEY: ClassVar[str] = os.getenv("hypixel_api_key")
+    API_KEY: ClassVar[str] = os.environ.get("hypixel_api_key")
     def __init__(self) -> None:
         super().__init__(command_prefix="!", intents=discord.Intents.default(), help_command=None, owner_id=702385226407608341)
         self.session: aiohttp.ClientSession | None = None
@@ -45,10 +45,10 @@ class FarmingCouncil(commands.Bot):
         #await self.load_extension("cogs.rent_calc")
         self.session = aiohttp.ClientSession()
         self.pool = await aiomysql.create_pool(
-            host=os.getenv("DATABASE_HOST"),
-            user=os.getenv("DB_USERNAME"),
-            password=os.getenv("DB_PASSWORD"),
-            db=os.getenv("DB_NAME"),
+            host=os.environ.get("DATABASE_HOST"),
+            user=os.environ.get("DB_USERNAME"),
+            password=os.environ.get("DB_PASSWORD"),
+            db=os.environ.get("DB_NAME"),
             loop=self.loop,
             port = 32813
         )
@@ -69,7 +69,8 @@ class FarmingCouncil(commands.Bot):
             await self.load_extension(cog.name)
 
     async def on_ready(self) -> None:
-        await self.tree.sync()
+        #await self.tree.sync()
+        await self.tree.sync(guild=discord.Object(id=1040291074410819594))
         print(f"Logged in as {self.user} ({self.user.id})")  # type: ignore
 
     async def close(self) -> None:

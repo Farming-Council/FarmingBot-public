@@ -65,18 +65,16 @@ def try_it(member,collat):
         return 1
 
 async def calculate_farming_weight(self, ign,profile = ""):
-
+    # Get profile and player data
     async with self.session.get(f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{ign}/{profile}") as req:
         try:
             response = await req.json()
         except Exception as e:
-            print(e)
             return [0,"Hypixel is down"]
     async with self.session.get(f"https://slothpixel.farmingcouncil.com/api/players/{ign}") as req:
         try:
             player = await req.json()
         except Exception as e:
-            print(e)
             return [0,"Hypixel is down"]
 
     json = response
@@ -94,6 +92,7 @@ async def calculate_farming_weight(self, ign,profile = ""):
     except:
         pass
     if member:
+        
         try:
             farming_level = int(member["skills"]["farming"]["level"])
         except:

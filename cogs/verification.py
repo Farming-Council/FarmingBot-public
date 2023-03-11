@@ -15,6 +15,9 @@ if TYPE_CHECKING:
     import aiomysql
     from utils import FarmingCouncil
 
+main_guild = discord.Object(1020742260683448450)
+test_guild = discord.Object(1040291074410819594)
+
 class Verification(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
         self.bot: FarmingCouncil = bot
@@ -55,6 +58,8 @@ class Verification(commands.Cog):
         embed = discord.Embed(title="Success", description="You have successfully unlinked your account. To re-link run </link:1082814958871527566>.", color=0x2F3136)
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
 
     @app_commands.command(description="Link your in-game hypixel account")
     @app_commands.guild_only()
@@ -169,7 +174,6 @@ class Verification(commands.Cog):
                 colour=discord.Colour.red()
             )
         )
-
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Verification(bot))
