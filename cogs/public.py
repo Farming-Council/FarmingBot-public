@@ -33,7 +33,7 @@ class Public(commands.Cog):
     @app_commands.command(description="Credits for the bot")
     @app_commands.guild_only()
     async def credits(self, interaction: discord.Interaction):
-        e = discord.Embed(title="Credits", description="**Director** \n[TheThe](https://www.youtube.com/@FarmingCouncil)\n\n**Development Manager & Lead** \n[ItsNeil](https://github.com/ItsNeil17)\n[NoodlesRush](https://www.youtube.com/watch?v=dQw4w9WgXcQ)\n\n**Developer**\n[CosmicCrow](https://github.com/JeffreyWangDev)\n[Bump](https://github.com/TapXDrew)\n\n**Contributers**\nBankhier\nKingRabbit\nLee_Matod", color=0x2F3136)
+        e = discord.Embed(title="Credits", description="**Director** \n[TheThe](https://www.youtube.com/@FarmingCouncil)\n\n**Development Manager & Lead** \n[CosmicCrow](https://github.com/JeffreyWangDev)\n[NoodlesRush](https://www.youtube.com/watch?v=dQw4w9WgXcQ)\n\n**Developer**\n[Bump](https://github.com/TapXDrew)\n\n**Contributers**\nBankhier\nKingRabbit\nLee_Matod", color=0x2F3136)
         e.set_thumbnail(url="https://i.imgur.com/Z75ZL1L.png")
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)
