@@ -177,3 +177,4 @@ class Verification(commands.Cog):
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Verification(bot))
+
