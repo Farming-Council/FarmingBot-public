@@ -28,6 +28,7 @@ class Suggestion(commands.Cog):
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await channel.send(embed=e)
         await interaction.response.send_message("Your suggestion has been sent!", ephemeral=True)
+        await command_counter("suggest")
     
     @suggest.error
     async def suggest_error(

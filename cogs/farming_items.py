@@ -252,6 +252,7 @@ class FarmingItems(commands.Cog):
             await interaction.followup.send(embed=embed,view = Pages(foundItems,interaction.user))
         else:
             await interaction.followup.send(embed=embed)
+        await command_counter("evaluate")
 
     async def send_error_response(self, interaction: discord.Interaction, error: str, description: str) -> None:
         return await interaction.followup.send(
