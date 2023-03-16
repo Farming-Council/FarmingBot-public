@@ -70,13 +70,14 @@ class FarmingCouncil(commands.Bot):
                         link TEXT
                     )"""
                 )
-                await conn.commit()
+                await cursor.execute(
                     """CREATE TABLE IF NOT EXISTS commandcounter (
                         cmd_name TEXT NOT NULL,
                         user_id BIGINT,
                         timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
                     )"""
                 )
+                await conn.commit()
 
 
         for cog in pkgutil.iter_modules(["cogs"], prefix="cogs."):
