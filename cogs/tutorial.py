@@ -9,6 +9,10 @@ from discord.ext import commands
 
 if TYPE_CHECKING:
     from utils import FarmingCouncil
+class Links(discord.ui.View):
+    def __init__(self, url: str):
+        super().__init__()
+        self.add_item(discord.ui.Button(label='Click Here', url=url))
 
 class CropView(discord.ui.View):
     def __init__(self, crop):
@@ -23,23 +27,17 @@ class CropView(discord.ui.View):
 
     @discord.ui.button(label="Video", style=discord.ButtonStyle.green)
     async def video(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if self.crop.lower() == "carrots":
-            link = await get_crop("carrots")
-        elif self.crop.lower() == "potato":
-            link = await get_crop("potato")
-        elif self.crop.lower() == "wheat":
-            link = await get_crop("wheat")
-        elif self.crop.lower() == "sugar cane":
-            link = await get_crop("sugar cane")
-        elif self.crop.lower() == "pumpkin":
-            link = await get_crop("pumpkin")
-        elif self.crop.lower() == "melon":
-            link = await get_crop("melon")
-        elif self.crop.lower() == "teleport pads":
-            link = await get_crop("teleport pads")
-        e = discord.Embed(title=f"{self.crop} Guide", description=f"Here is a video of `{self.crop}` guide:\n{link}", color=0x2F3136)
-        e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
-        await interaction.response.send_message(embed=e)
+        link = await interaction.client.get_crop(self.crop.lower())
+        if link:
+            link = link[1]
+            e = discord.Embed(title=f"{self.crop} Guide", description=f"Here is a video of `{self.crop}` guide\nYou can also join our discord server for more information!", color=0x2F3136)
+            e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.response.send_message(embed=e, view=Links(link))
+        else:
+            e = discord.Embed(title=f"{self.crop} Guide", description=f"Sorry, but we don't have a video guide for `{self.crop}` yet. Please let us know if you would like to make one! Btw: If you are seeing this, then something very bad happend...", color=0x2F3136)
+            e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.response.send_message(embed=e)
+
 
 class Tutorial(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
@@ -51,28 +49,8 @@ class Tutorial(commands.Cog):
         e = discord.Embed(title=f"{topic} Guide", description=f"Please let us know if you want the guide to be **written** or **video** form!", color=0x2F3136)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e, view=CropView(topic))
-        
-    @app_commands.command(description="Tell a user how to use our shop")
-    @app_commands.guild_only()
-    async def addtutorial(self, interaction: discord.Interaction, topic: Literal["Carrots", "Potato", "Wheat", "Sugar Cane", "Pumpkin", "Melon", "Teleport Pads"], video: str):
-        userRoles = [id.id for id in interaction.user.roles]
-        if 1028636883879743558 not in userRoles:
-            await interaction.response.send_message("This command is not for you", ephemeral=True)
-            return
-        await add_crop(str(topic), str(video))
-        await interaction.response.send_message("Done lol")
-        
-    @app_commands.command(description="Tell a user how to use our shop")
-    @app_commands.guild_only()
-    async def removetutorial(self, interaction: discord.Interaction, topic: Literal["Carrots", "Potato", "Wheat", "Sugar Cane", "Pumpkin", "Melon", "Teleport Pads"]):
-        userRoles = [id.id for id in interaction.user.roles]
-        if 1028636883879743558 not in userRoles:
-            await interaction.response.send_message("This command is not for you", ephemeral=True)
-            return
-        await remove_crop(str(topic))
-        await interaction.response.send_message("Done lol")
+    
 
-        
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Tutorial(bot))
