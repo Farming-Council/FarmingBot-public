@@ -64,6 +64,22 @@ class FarmingCouncil(commands.Bot):
                         timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
                     )"""
                 )
+<<<<<<< Updated upstream
+=======
+                await cursor.execute(
+                    """CREATE TABLE IF NOT EXISTS commandcounter (
+                        commandname TEXT UNIQUE,
+                        amount BIG INT NOT NULL
+                    )"""
+                )
+                await cursor.execute(
+                    """CREATE TABLE IF NOT EXISTS tutorial (
+                        cropname TEXT UNIQUE,
+                        link TEXT
+                    )"""
+                )
+                await conn.commit()
+>>>>>>> Stashed changes
 
         for cog in pkgutil.iter_modules(["cogs"], prefix="cogs."):
             await self.load_extension(cog.name)
@@ -81,6 +97,52 @@ class FarmingCouncil(commands.Bot):
             await self.pool.wait_closed()
         await super().close()
 
+<<<<<<< Updated upstream
+=======
+    async def command_counter(self,command_name):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("SELECT * FROM commandcounter WHERE commandname = %s", (str(command_name),))
+                data = await cursor.fetchone()
+        if data is None:
+            number = 1
+        else:
+            number = int(data[1])+1
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("INSERT INTO commandcounter (commandname, amount) VALUES (?, ?) ON CONFLICT (commandname) do update set amount = ?", (str(command_name), int(number), int(number)))
+                conn.commit()
+                
+    async def get_crop(self,cropname):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("SELECT * FROM tutorial WHERE cropname = %s", (str(cropname),))
+                data = await cursor.fetchone()
+        return data
+
+    async def add_crop(self,cropname, link):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("INSERT INTO tutorial (cropname, link) VALUES (?, ?) ON CONFLICT (cropname) do update set link = ?", (str(cropname), str(link), str(link)))
+                conn.commit()
+    
+    async def remove_crop(self,cropname):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("DELETE FROM tutorial where cropname = ?", (str(cropname),))
+                conn.commit()
+
+>>>>>>> Stashed changes
     async def get_uuid(self, username: str) -> str:
         """Gets the UUID of a Minecraft player with the given username.
         Parameters
