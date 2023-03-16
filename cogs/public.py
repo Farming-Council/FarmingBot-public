@@ -21,6 +21,7 @@ class Public(commands.Cog):
         e.set_thumbnail(url="https://i.imgur.com/EPbSXCP.png")
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)
+        await self.bot.command_counter(interaction)
 
     @app_commands.command(description="Run this command to see how to get farming equipment")
     @app_commands.guild_only()
@@ -29,7 +30,7 @@ class Public(commands.Cog):
         e.set_thumbnail(url="https://i.imgur.com/nQDKSq9.png")
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)
-
+        await self.bot.command_counter(interaction)
     @app_commands.command(description="Credits for the bot")
     @app_commands.guild_only()
     async def credits(self, interaction: discord.Interaction):
@@ -37,6 +38,7 @@ class Public(commands.Cog):
         e.set_thumbnail(url="https://i.imgur.com/Z75ZL1L.png")
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)
+        await self.bot.command_counter(interaction)
 
     
 async def setup(bot: FarmingCouncil) -> None:

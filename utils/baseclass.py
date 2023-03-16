@@ -64,13 +64,20 @@ class FarmingCouncil(commands.Bot):
                         timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
                     )"""
                 )
+                await cursor.execute(
+                    """CREATE TABLE IF NOT EXISTS commandcounter (
+                        cmd_name TEXT NOT NULL,
+                        user_id BIGINT,
+                        timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
+                    )"""
+                )
 
         for cog in pkgutil.iter_modules(["cogs"], prefix="cogs."):
             await self.load_extension(cog.name)
 
     async def on_ready(self) -> None:
         #await self.tree.sync()
-        await self.tree.sync(guild=discord.Object(id=1040291074410819594))
+        await self.tree.sync()
         print(f"Logged in as {self.user} ({self.user.id})")  # type: ignore
 
     async def close(self) -> None:
@@ -80,6 +87,15 @@ class FarmingCouncil(commands.Bot):
             self.pool.close()
             await self.pool.wait_closed()
         await super().close()
+
+    async def command_counter(self,interaction: discord.Interaction):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id) VALUES (%s, %s)", (str(interaction.command.name), int(interaction.user.id)))
+                await conn.commit()
+
 
     async def get_uuid(self, username: str) -> str:
         """Gets the UUID of a Minecraft player with the given username.

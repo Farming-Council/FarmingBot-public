@@ -26,9 +26,10 @@ class Suggestion(commands.Cog):
         channel = self.bot.get_channel(1071503868925575249)
         e = discord.Embed(title="Suggestion", description=f"{suggestion}\n\nSent by: {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})\nFrom server: {interaction.guild.name} ({interaction.guild.id})", color=0x2F3136)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
-        await channel.send(embed=e)
+        if channel:
+            await channel.send(embed=e)
         await interaction.response.send_message("Your suggestion has been sent!", ephemeral=True)
-    
+        await self.bot.command_counter(interaction)
     @suggest.error
     async def suggest_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError

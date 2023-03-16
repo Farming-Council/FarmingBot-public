@@ -32,6 +32,8 @@ class Verification(commands.Cog):
     @app_commands.command(description="Unlink your in-game hypixel account")
     @app_commands.guild_only()
     async def unlink(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+        await self.bot.command_counter(interaction)
         async with self.bot.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
@@ -39,7 +41,7 @@ class Verification(commands.Cog):
                 await cursor.execute("SELECT * FROM verification WHERE user_id = %s", (interaction.user.id))
                 result = await cursor.fetchone()
         if result is None:
-            return await interaction.response.send_message("You are not linked!", ephemeral=True)
+            return await interaction.followup.send("You are not linked!", ephemeral=True)
         async with self.bot.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
@@ -54,10 +56,10 @@ class Verification(commands.Cog):
                 await interaction.user.add_roles(unverified_role)
             except:
                 embed = discord.Embed(title="\U0000274c Failed", description="There was an issue while unverifying, please contact a staff member.", color=discord.Colour.red())
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                return await interaction.followup.send(embed=embed, ephemeral=True)
         embed = discord.Embed(title="Success", description="You have successfully unlinked your account. To re-link run </link:1082814958871527566>.", color=0x2F3136)
         
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
 
 
@@ -68,6 +70,7 @@ class Verification(commands.Cog):
         assert isinstance(interaction.user, discord.Member)
         ign = ign or interaction.user.display_name
         await interaction.response.defer(ephemeral=True)
+        await self.bot.command_counter(interaction)
         try:
             uuid = await self.bot.get_uuid(ign)
         except (KeyError, InvalidMinecraftUsername):
