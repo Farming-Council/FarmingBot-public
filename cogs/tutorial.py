@@ -9,6 +9,10 @@ from discord.ext import commands
 
 if TYPE_CHECKING:
     from utils import FarmingCouncil
+class Links(discord.ui.View):
+    def __init__(self, url: str):
+        super().__init__()
+        self.add_item(discord.ui.Button(label='Click Here', url=url))
 
 class CropView(discord.ui.View):
     def __init__(self, crop):
@@ -23,23 +27,17 @@ class CropView(discord.ui.View):
 
     @discord.ui.button(label="Video", style=discord.ButtonStyle.green)
     async def video(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if self.crop.lower() == "carrots":
-            link = "https://www.youtube.com/watch?v=tPKdSU22SEM&ab_channel=TheFarmingCouncil"
-        elif self.crop.lower() == "potato":
-            link = "https://www.youtube.com/watch?v=tPKdSU22SEM&ab_channel=TheFarmingCouncil"
-        elif self.crop.lower() == "wheat":
-            link = "https://www.youtube.com/watch?v=tPKdSU22SEM&ab_channel=TheFarmingCouncil"
-        elif self.crop.lower() == "sugar cane":
-            link = "https://youtu.be/Zy2XU0Nu6Sw"
-        elif self.crop.lower() == "pumpkin":
-            link = "https://www.youtube.com/watch?v=jkpEy0f0dl4"
-        elif self.crop.lower() == "melon":
-            link = "https://www.youtube.com/watch?v=jkpEy0f0dl4"
-        elif self.crop.lower() == "teleport pads":
-            link = "https://www.youtube.com/watch?v=wtUTbQigH5Q&t"
-        e = discord.Embed(title=f"{self.crop} Guide", description=f"Here is a video of `{self.crop}` guide:\n{link}", color=0x2F3136)
-        e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
-        await interaction.response.send_message(embed=e)
+        link = await interaction.client.get_crop(self.crop.lower())
+        if link:
+            link = link[1]
+            e = discord.Embed(title=f"{self.crop} Guide", description=f"Here is a video of `{self.crop}` guide\nYou can also join our discord server for more information!", color=0x2F3136)
+            e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.response.send_message(embed=e, view=Links(link))
+        else:
+            e = discord.Embed(title=f"{self.crop} Guide", description=f"Sorry, but we don't have a video guide for `{self.crop}` yet. Please let us know if you would like to make one! Btw: If you are seeing this, then something very bad happend...", color=0x2F3136)
+            e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.response.send_message(embed=e)
+
 
 class Tutorial(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
