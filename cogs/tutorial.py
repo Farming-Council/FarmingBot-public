@@ -51,7 +51,7 @@ class Tutorial(commands.Cog):
         e = discord.Embed(title=f"{topic} Guide", description=f"Please let us know if you want the guide to be **written** or **video** form!", color=0x2F3136)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e, view=CropView(topic))
-        
+        await self.bot.command_counter(interaction)
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Tutorial(bot))
