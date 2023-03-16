@@ -71,6 +71,14 @@ class FarmingCouncil(commands.Bot):
                     )"""
                 )
                 await conn.commit()
+                    """CREATE TABLE IF NOT EXISTS commandcounter (
+                        cmd_name TEXT NOT NULL,
+                        user_id BIGINT,
+                        timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
+                    )"""
+                )
+
+
         for cog in pkgutil.iter_modules(["cogs"], prefix="cogs."):
             await self.load_extension(cog.name)
 
@@ -94,6 +102,15 @@ class FarmingCouncil(commands.Bot):
                 await cursor.execute("SELECT * FROM tutorial WHERE cropname = %s", (str(cropname),))
                 data = await cursor.fetchone()
         return data
+
+
+    async def command_counter(self,interaction: discord.Interaction):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id) VALUES (%s, %s)", (str(interaction.command.name), int(interaction.user.id)))
+                await conn.commit()
 
 
     async def get_uuid(self, username: str) -> str:

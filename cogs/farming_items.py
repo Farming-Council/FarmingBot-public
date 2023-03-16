@@ -176,7 +176,6 @@ class FarmingItems(commands.Cog):
     @app_commands.guild_only()
     async def evaluate(self, interaction: discord.Interaction, ign: str, profile: str = None):
         await interaction.response.defer()
-
         try:
             uuid = await self.bot.get_uuid(ign)
         except ConnectionError as exception:
@@ -252,6 +251,7 @@ class FarmingItems(commands.Cog):
             await interaction.followup.send(embed=embed,view = Pages(foundItems,interaction.user))
         else:
             await interaction.followup.send(embed=embed)
+        await self.bot.command_counter(interaction)
 
     async def send_error_response(self, interaction: discord.Interaction, error: str, description: str) -> None:
         return await interaction.followup.send(
