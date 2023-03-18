@@ -50,8 +50,8 @@ class Verification(commands.Cog):
                 await conn.commit()
         if interaction.guild.id in [1040291074410819594,1020742260683448450]:
             try:
-                verified_role = discord.utils.get(interaction.guild.roles, name="Verified")
-                unverified_role = discord.utils.get(interaction.guild.roles, name="Unverified")
+                verified_role = discord.utils.get(interaction.guild.roles, name="Linked")
+                unverified_role = discord.utils.get(interaction.guild.roles, name="Unlinked")
                 await interaction.user.remove_roles(verified_role)
                 await interaction.user.add_roles(unverified_role)
             except:
@@ -140,8 +140,8 @@ class Verification(commands.Cog):
         if player.social_media.discord == discord_name:
             if interaction.guild.id in [1040291074410819594,1020742260683448450]:
                 try:
-                    verified_role = discord.utils.get(interaction.guild.roles, name="Verified")
-                    unverified_role = discord.utils.get(interaction.guild.roles, name="Unverified")
+                    verified_role = discord.utils.get(interaction.guild.roles, name="Linked")
+                    unverified_role = discord.utils.get(interaction.guild.roles, name="Unlinked")
                     await interaction.user.add_roles(verified_role)
                     await interaction.user.remove_roles(unverified_role)
                 except:
