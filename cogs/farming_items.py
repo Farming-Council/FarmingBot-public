@@ -38,7 +38,7 @@ class Pages(discord.ui.View):
             if "§" in name:
                 name =name[2:]
             if "sugar" in name.lower():                
-                name = str(discord.PartialEmoji.from_str("<:sugar_cane:1033981883870105651>")) +" "+ name
+                name = str(discord.PartialEmoji.from_str("<:sugar_cane:1042829849456287854>")) +" "+ name
             elif "carrot" in name.lower():                
                 name = str(discord.PartialEmoji.from_str("<:carrot:1042829823741001798>")) +" "+ name
             elif "wart" in name.lower():                
