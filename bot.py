@@ -11,3 +11,4 @@ bot = FarmingCouncil()
 
 if __name__ == "__main__":
     bot.run(os.environ.get("TOKEN"))
+    #os.environ.get("TOKEN")

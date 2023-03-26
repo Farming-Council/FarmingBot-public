@@ -28,8 +28,12 @@ class contesttracker(commands.Cog):
     @app_commands.command(description="test")
     @app_commands.guild_only()
     @app_commands.describe(ign = "Hypixel username")
-    async def contest(self, interaction: discord.Interaction, ign: str, time_period: Literal["1 day", "1 week", "1 month", "6 months", "1 year", "2 years", "3 years"] = "1 week"):
-        uuid = await self.bot.get_uuid(ign)
+    async def contests(self, interaction: discord.Interaction, ign: str, time_period: Literal["1 day", "1 week", "1 month", "6 months", "1 year", "2 years", "3 years"] = "1 week"):
+        try:
+            uuid = await self.bot.get_uuid(ign)
+        except:
+            await interaction.response.send_message("Name Invalid, try another IGN", ephemeral=True)
+            return
         profile = await self.bot.get_most_recent_profile(uuid)
         skyblock_data = await self.bot.get_skyblock_data(uuid, profile)
         contests = skyblock_data["jacob2"]["contests"]
@@ -64,7 +68,7 @@ class contesttracker(commands.Cog):
             counter += 1
         fig, ax = plt.subplots()
         plt.xticks(timers, ["12pm", "", "2am",  "", "4am",  "", "6am",  "", "8am",  "", "10am",  "", "12am",  "", "2pm",  "", "4pm",  "", "6pm",  "", "8pm",  "", "10pm", ""], rotation=45)
-        ax.bar(timers, counters, color="#ec5635")
+        bars = ax.bar(timers, counters, color="#ec5635")
         ax.set_xlabel('Times')
         ax.set_ylabel('Amount of Contests')
 
@@ -76,11 +80,14 @@ class contesttracker(commands.Cog):
         ax.yaxis.label.set_color('white')
         ax.tick_params(axis='x', colors='white')
         ax.tick_params(axis='y', colors='white')
+        ax.bar_label(bars, color="white", rotation=90, label_type= "center") 
         plt.savefig('image.png', transparent=True) 
         image = discord.File("image.png")    
-        embed = discord.Embed(title = "Contests Tracker", description = f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{len(send)}`")
+        embed = discord.Embed(title = "Contests Tracker", description = f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{timecounter}`",color=0x2F3136)
         embed.set_image(url='attachment://image.png')
+        embed.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         if send == {}:
+            embed = discord.Embed(title = "Contests Tracker", description = f"`{ign}` has not particpated in any **Jacob Contest's** in the past `{time_period}`",color=0x2F3136)
             await interaction.response.send_message(embed = embed)
         else:
             await interaction.response.send_message(embed = embed, file=image)
