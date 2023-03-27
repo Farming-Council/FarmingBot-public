@@ -238,6 +238,18 @@ class FarmingCouncil(commands.Bot):
                 i += 1
 
             return profiles[latest_profile_index]["members"][uuid]
+    async def get_skyblock_data_SLOTHPIXEL(self, ign: str, profile: str | None, uuid: str) -> HypixelPlayer:
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        async with self.session.get(
+            f"https://api.slothpixel.me/api/skyblock/profile/{ign}/{profile}",
+            headers={"API-Key": self.API_KEY}
+        ) as req:
+            try:
+                info = await req.json()
+            except:
+                raise HypixelIsDown()
+            return info["members"][uuid]
     async def get_most_recent_profile(self, uuid):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
