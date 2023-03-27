@@ -70,7 +70,6 @@ class contesttracker(commands.Cog):
         fig, ax = plt.subplots()
         plt.xticks(timers, ["12am ", "", "2am",  "", "4am",  "", "6am",  "", "8am",  "", "10am",  "", "12pm",  "", "2pm",  "", "4pm",  "", "6pm",  "", "8pm",  "", "10pm", ""], rotation=45)
         bars = ax.bar(timers, counters, color="#ec5635")
-
         ax.spines['bottom'].set_color('white')
         ax.spines['top'].set_color(None)
         ax.spines['left'].set_color('white')
@@ -82,12 +81,12 @@ class contesttracker(commands.Cog):
         ax.bar_label(bars, color="white", rotation=90, label_type= "edge", padding=5) 
         plt.savefig('image.png', transparent=True) 
         image = discord.File("image.png")    
-        embed = discord.Embed(title = "Contests Tracker", description = f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{len(send)}`")
+        embed = discord.Embed(title = "Contests Tracker", description = f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{timecounter}`",color=0x2F3136)
         embed.set_image(url='attachment://image.png')
+        embed.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         if send == {}:
             embed = discord.Embed(title = "Contests Tracker", description = f"`{ign}` has not particpated in any **Jacob Contest's** in the past `{time_period}`",color=0x2F3136)
             await interaction.edit_original_response(content="", embed = embed)
-            await interaction.response.send_message(embed = embed)
         else:
             await interaction.edit_original_response(content="", embed = embed, attachments= [image])
 
