@@ -28,6 +28,10 @@ class commands(commands.Cog):
     @app_commands.command(description="Show Commands")
     @commands.has_permissions(administrator=True)
     async def commands(self, interaction: discord.Interaction):
+        if interaction.guild.id is not 1020742260683448450: #This is the wanted guild id
+            return
+        if interaction.author.id not in [242063157122564106, 783275214267351062, 360993066758176768]:
+            return
         commands = await self.bot.get_commands()
         send = {}
         for i in commands:
