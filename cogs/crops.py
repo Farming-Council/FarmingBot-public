@@ -25,7 +25,7 @@ class crops(commands.Cog):
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
 
-    @app_commands.command(description="Profit Table for Crops")
+    @app_commands.command(description="Profit Table for Crops Per Hour")
     @app_commands.guild_only()
     @app_commands.describe(farming_fortune="Amount of Farming Fortune you have")
     async def cropprofits(self, interaction: discord.Interaction, farming_fortune: int = 800):
@@ -56,7 +56,7 @@ class crops(commands.Cog):
         sorting = sorted(sorting.items(), key=lambda x:x[1], reverse=True) 
         for i in sorting:
             send += i[0]
-        embed = discord.Embed(title = f"Crop Profits for Farming Fortune `{farming_fortune}`", description = f"This is based on the current bazzar sell price and assuming you get **20.0 blocks per second** while farming and this is based on the **Enchanted Variant** price.\n\n{send}", color=0x2F3136)
+        embed = discord.Embed(title = f"Crop Profits at `{farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n{send}", color=0x2F3136)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
