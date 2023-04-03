@@ -56,7 +56,7 @@ class crops(commands.Cog):
         sorting = sorted(sorting.items(), key=lambda x:x[1], reverse=True) 
         for i in sorting:
             send += i[0]
-        embed = discord.Embed(title = f"Crop Profits for Farming Fortune `{farming_fortune}`", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n{send}", color=0x2F3136)
+        embed = discord.Embed(title = f"Crop Profits at `{farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n{send}", color=0x2F3136)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
