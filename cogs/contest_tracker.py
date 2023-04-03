@@ -26,9 +26,9 @@ class contesttracker(commands.Cog):
         self.session = aiohttp.ClientSession()
 
     @app_commands.command(description="Find Contests in a given time period")
-    @app_commands.guild_only()
     @app_commands.describe(ign="Hypixel username", profile= "choose the hypixel skyblock profile", time_period="Use the time range ['1 year', '1month', '6days', '2 weeks']")
     async def contests(self, interaction: discord.Interaction, ign: str, profile: str = None, time_period: str = "1 week"):
+        await self.bot.command_counter(interaction)
         try:
             await interaction.response.send_message("Loading Graph")
             try:
