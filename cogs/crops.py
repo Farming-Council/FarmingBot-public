@@ -34,7 +34,7 @@ class crops(commands.Cog):
             await interaction.response.send_message("Sorry, you cannot input farming fortunes over **1800**", ephemeral=True)
             return
         sorting = {}
-        crops = {"ENCHANTED_CARROT": ["Carrot", 3, "<:Carrot:934749782591815680>"], 
+        crops = {"ENCHANTED_CARROT": ["Carrot", 3, "<:carrot:1042829823741001798>"], 
                  "ENCHANTED_POTATO": ["Potato", 3, "<:potato:1042829840140750848>"], 
                  "ENCHANTED_NETHER_STALK": ["Nether Wart", 2.5, "<:NetherWarts:1042829838655959050>"], 
                  "ENCHANTED_HAY_BLOCK": ["Wheat", 1, "<:Wheat:1042829818133217300>"], 
