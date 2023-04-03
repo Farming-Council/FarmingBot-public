@@ -250,6 +250,18 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info["members"][uuid]
+    async def get_bazzar_data(self):
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        async with self.session.get(
+            f"https://api.slothpixel.me/api/skyblock/bazaar",
+            headers={"API-Key": self.API_KEY}
+        ) as req:
+            try:
+                info = await req.json()
+            except:
+                raise HypixelIsDown()
+            return info
     async def get_most_recent_profile(self, uuid):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
