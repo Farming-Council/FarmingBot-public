@@ -25,7 +25,7 @@ class crops(commands.Cog):
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
 
-    @app_commands.command(description="Find Contests in a given time period")
+    @app_commands.command(description="Profit Table for Crops")
     @app_commands.guild_only()
     @app_commands.describe(farming_fortune="Amount of Farming Fortune you have")
     async def crops(self, interaction: discord.Interaction, farming_fortune: int = 800):
