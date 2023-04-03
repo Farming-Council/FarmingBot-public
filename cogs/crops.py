@@ -28,7 +28,7 @@ class crops(commands.Cog):
     @app_commands.command(description="Profit Table for Crops")
     @app_commands.guild_only()
     @app_commands.describe(farming_fortune="Amount of Farming Fortune you have")
-    async def crops(self, interaction: discord.Interaction, farming_fortune: int = 800):
+    async def cropprofits(self, interaction: discord.Interaction, farming_fortune: int = 800):
         send = ""
         if farming_fortune > 1800:
             await interaction.response.send_message("Sorry, you cannot input farming fortunes over **1800**", ephemeral=True)
