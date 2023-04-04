@@ -73,6 +73,7 @@ class MyView(discord.ui.View):
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.edit_message(embed=embed, view = self)
+        await self.bot.command_counter(interaction)
 
 class crops(commands.Cog):
     def __init__(self, bot: FarmingCouncil):
@@ -83,7 +84,6 @@ class crops(commands.Cog):
         self.session = aiohttp.ClientSession()
 
     @app_commands.command(description="Profit Table for Crops Per Hour")
-    @app_commands.guild_only()
     @app_commands.describe(farming_fortune="Amount of Farming Fortune you have")
     async def cropprofits(self, interaction: discord.Interaction, farming_fortune: int = 800):
         send = ""
@@ -118,6 +118,7 @@ class crops(commands.Cog):
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
         view = MyView(self.bot, farming_fortune)
+        await self.bot.command_counter(interaction)
         await interaction.response.send_message(embed = embed, view=view)
 
 

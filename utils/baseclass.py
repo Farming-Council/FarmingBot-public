@@ -14,6 +14,7 @@ from discord.ext import commands
 
 from errors import InvalidMinecraftUsername, PlayerNotFoundError, ProfileNotFoundError, HypixelIsDown
 from _types import HypixelPlayer, HypixelSocialMedia
+import time
 
 load_dotenv()
 
@@ -110,8 +111,17 @@ class FarmingCouncil(commands.Bot):
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id) VALUES (%s, %s)", (str(interaction.command.name), int(interaction.user.id)))
+                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id, timestamp) VALUES (%s, %s, %s)", (str(interaction.command.name), int(interaction.user.id), int(time.time())))
                 await conn.commit()
+                
+    async def get_commands(self):
+        async with self.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("select * from commandcounter")
+                commands = await cursor.fetchall()
+        return commands
 
 
     async def get_uuid(self, username: str) -> str:
