@@ -10,29 +10,17 @@ class HypixelSocialMedia(NamedTuple):
     twitch: str | None = None
     twitter: str | None = None
     hypixel: str | None = None
-    mixer: str | None = None
     discord: str | None = None
-    beam: str | None = None
 
     @classmethod
-    def from_dict(cls, d: dict[str, str | None], /) -> HypixelSocialMedia:
-        links: dict[str, str | None] | None = d.get("links")  # type: ignore
-        if links is None:
-            return HypixelSocialMedia(
-                instagram=d.get("INSTAGRAM"),
-                youtube=d.get("YOUTUBE"),
-                twitch=d.get("TWITCH"),
-                beam=d.get("BEAM"),
-            )
+    def from_dict(cls, links: dict[str, str | None], /) -> HypixelSocialMedia:
         return HypixelSocialMedia(
-            instagram=d.get("INSTAGRAM"),
+            instagram=links.get("INSTAGRAM"),
             youtube=links.get("YOUTUBE"),
             hypixel=links.get("HYPIXEL"),
             twitter=links.get("TWITTER"),
-            mixer=links.get("MIXER"),
             discord=links.get("DISCORD"),
-            twitch=d.get("TWITCH"),
-            beam=d.get("BEAM"),
+            twitch=links.get("TWITCH")
         )
 
 
