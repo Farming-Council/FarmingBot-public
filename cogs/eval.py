@@ -109,7 +109,7 @@ class eval(commands.Cog):
 
     @app_commands.command(description="Evaluate the price of your hoes!")
     @app_commands.describe(ign="Hypixel username", profile= "choose the hypixel skyblock profile")
-    async def evaluate(self, interaction: discord.Interaction, ign: str, profile: str = None):
+    async def evaluate(self, interaction: discord.Interaction, ign: str = "", profile: str = None):
         #* Get skyblock data
         await self.bot.command_counter(interaction)
         embed = discord.Embed(title = "Loading", description="Evaluating your Hoe's . . .", color=0x2F3136)
@@ -118,6 +118,8 @@ class eval(commands.Cog):
                     icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed = embed)
         try:
+            if ign == "":
+                ign = await self.bot.get_db_info(int(interaction.user.id))
             uuid = await self.bot.get_uuid(ign)
             if profile == None:
                 profile = 0
