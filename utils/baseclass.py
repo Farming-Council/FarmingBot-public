@@ -154,38 +154,19 @@ class FarmingCouncil(commands.Bot):
             return js["id"]
 
     async def get_hypixel_player(self, uuid: str) -> HypixelPlayer:
-        """Gets a Hypixel player object from the given UUID.
 
-        Parameters
-        ----------
-        uuid: :class:`str`
-            The UUID of the player.
-
-        Returns
-        -------
-        :class:`HypixelPlayer`
-            The constructed player object.
-
-        Raises
-        ------
-        ConnectionError
-            The aiohttp session has not been instantiated.
-        PlayerNotFoundError
-            The player could not be located by the Hypixel API.
-        """
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.hypixel.net/player?uuid={uuid}",
-            headers={"API-Key": self.API_KEY}
+            f"https://api.slothpixel.me/api/players/{uuid}?key={self.API_KEY}"
         ) as req:
             info = await req.json()
-            if not info["success"] or not info["player"]:
+            if req.status != 200:
                 raise PlayerNotFoundError(uuid=uuid)
-            social_media = HypixelSocialMedia.from_dict(info["player"]["socialMedia"])
+            social_media = HypixelSocialMedia.from_dict(info["links"])
             return HypixelPlayer(
-                username=info["player"]["displayname"],
-                uuid=info["player"]["uuid"],
+                username=info["username"],
+                uuid=info["uuid"],
                 social_media=social_media
             )
 
@@ -276,32 +257,21 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.hypixel.net/skyblock/profiles?uuid={uuid}",
-            headers={"API-Key": self.API_KEY}
+            f"https://api.slothpixel.me/api/skyblock/profile/{uuid}?key={self.API_KEY}"
         ) as req:
             try:
                 info = await req.json()
             except:
                 raise HypixelIsDown()
 
-            if not info["success"] or not info["profiles"]:
+            if req.status != 200:
                 raise PlayerNotFoundError(uuid=uuid)
 
-            profiles = info["profiles"]
-            if len(profiles) == 0:
+            if not info:
                 raise PlayerNotFoundError(uuid=uuid)
 
-            latest_profile_index = 0
-            latest_profile_last_save = 0
-            i = 0
-            for profileData in profiles:
-                if "last_save" in profileData:  # Not all profiles have this
-                    last_save = profileData["last_save"]
-                    if last_save > latest_profile_last_save:
-                        latest_profile_index = i
-                        latest_profile_last_save = last_save
-                i += 1
-            return(profiles[latest_profile_index]["cute_name"])
+            return(info["cute_name"])
+        
     async def get_db_info(self,discord_id):
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection

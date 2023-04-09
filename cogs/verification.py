@@ -104,7 +104,7 @@ class Verification(commands.Cog):
             account = await self.bot.get_hypixel_player(uuid)
             if profile == None:
                 profile = await self.bot.get_most_recent_profile(uuid)
-            await self.bot.get_skyblock_data(uuid, profile)
+            await self.bot.get_skyblock_data_SLOTHPIXEL(uuid, profile, uuid)
         except ProfileNotFoundError:
             return await interaction.followup.send(
                 embed=discord.Embed(
@@ -170,13 +170,8 @@ class Verification(commands.Cog):
             )
             embed.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
             return await interaction.followup.send(embed=embed)
-        await interaction.followup.send(
-            embed=discord.Embed(
-                title="\U0000274c Failed",
-                description="Your Discord account is not linked to your Hypixel account.",
-                colour=discord.Colour.red()
-            )
-        )
+        embed = discord.Embed(title="\U0000274c Failed", description="There was an issue while verifying, please contact an administrator regarding this issue.", color=discord.Color.red())
+        return await interaction.followup.send(embed=embed)
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Verification(bot))
