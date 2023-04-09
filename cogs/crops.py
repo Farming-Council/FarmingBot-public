@@ -46,7 +46,7 @@ class MyView(discord.ui.View):
             bazzar = await self.bot.get_bazzar_data()
             for crop in crops:
                 if crop == "ENCHANTED_HAY_BLOCK":
-                    profit = round((bazzar[crop]["quick_status"]["sellPrice"]/1296*(crops[crop][1]*(self.farming_fortune/100+1))+bazzar["ENCHANTED_SEEDS"]["quick_status"]["sellPrice"]/160*1.5*(800/100+1))*20.0*3600, 2)
+                    profit = round((bazzar[crop]["quick_status"]["sellPrice"]/1296*(crops[crop][1]*(self.farming_fortune/100+1))+bazzar["ENCHANTED_SEEDS"]["quick_status"]["sellPrice"]/160*1.5*(self.farming_fortune/100+1))*20.0*3600, 2)
                 else:
                     profit = round(bazzar[crop]["quick_status"]["sellPrice"]/160*(crops[crop][1]*((self.farming_fortune/100)+1))*20.0*3600, 2)
                 sorting[f"""{crops[crop][2]} **{"{:,}".format(profit)}**\n"""] = float(profit)
@@ -55,7 +55,7 @@ class MyView(discord.ui.View):
                 send += i[0]
             embed = discord.Embed(title = f"Crop Profits at `{self.farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**BAZZAR PRICE**__\n{send}", color=0x2F3136)
         else:
-            button.label = "Bazzar Price"
+            button.label = "Bazar Price"
             button.style = discord.ButtonStyle.green
             for crop in crops:
                 if crop == "ENCHANTED_HAY_BLOCK":
@@ -106,7 +106,7 @@ class crops(commands.Cog):
         bazzar = await self.bot.get_bazzar_data()
         for crop in crops:
             if crop == "ENCHANTED_HAY_BLOCK":
-                profit = round((bazzar[crop]["quick_status"]["sellPrice"]/1296*(crops[crop][1]*(farming_fortune/100+1))+bazzar["ENCHANTED_SEEDS"]["quick_status"]["sellPrice"]/160*1.5*(800/100+1))*20.0*3600, 2)
+                profit = round((bazzar[crop]["quick_status"]["sellPrice"]/1296*(crops[crop][1]*(farming_fortune/100+1))+bazzar["ENCHANTED_SEEDS"]["quick_status"]["sellPrice"]/160*1.5*(farming_fortune/100+1))*20.0*3600, 2)
             else:
                 profit = round(bazzar[crop]["quick_status"]["sellPrice"]/160*(crops[crop][1]*((farming_fortune/100)+1))*20.0*3600, 2)
             sorting[f"""{crops[crop][2]} **{"{:,}".format(profit)}**\n"""] = float(profit)
