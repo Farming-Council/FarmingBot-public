@@ -40,7 +40,7 @@ class MyView(discord.ui.View):
                 "ENCHANTED_RED_MUSHROOM": ["Red Mushroom", 1, "<:mushroom:1042829836894339072>", 10],
                 "ENCHANTED_BROWN_MUSHROOM": ["Brown Mushroom", 1, "<:mushroom:1042829836894339072>", 10]
         }
-        if button.label == "Bazzar Price":
+        if button.label == "Bazaar Price":
             button.label = "NPC Price"
             button.style = discord.ButtonStyle.red
             bazzar = await self.bot.get_bazzar_data()
@@ -55,7 +55,7 @@ class MyView(discord.ui.View):
                 send += i[0]
             embed = discord.Embed(title = f"Crop Profits at `{self.farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**BAZZAR PRICE**__\n{send}", color=0x2F3136)
         else:
-            button.label = "Bazar Price"
+            button.label = "Bazaar Price"
             button.style = discord.ButtonStyle.green
             for crop in crops:
                 if crop == "ENCHANTED_HAY_BLOCK":
