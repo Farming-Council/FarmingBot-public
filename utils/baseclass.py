@@ -107,11 +107,15 @@ class FarmingCouncil(commands.Bot):
 
 
     async def command_counter(self,interaction: discord.Interaction):
+        try:
+            name  = str(interaction.command.name)
+        except:
+            name = "None"
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id, timestamp) VALUES (%s, %s, %s)", (str(interaction.command.name), int(interaction.user.id), int(time.time())))
+                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id, timestamp) VALUES (%s, %s, %s)", (name, int(interaction.user.id), int(time.time())))
                 await conn.commit()
                 
     async def get_commands(self):

@@ -73,7 +73,6 @@ class MyView(discord.ui.View):
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.edit_message(embed=embed, view = self)
-        await self.bot.command_counter(interaction)
 
 class crops(commands.Cog):
     def __init__(self, bot: FarmingCouncil):
