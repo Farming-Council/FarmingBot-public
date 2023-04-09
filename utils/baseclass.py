@@ -125,24 +125,6 @@ class FarmingCouncil(commands.Bot):
 
 
     async def get_uuid(self, username: str) -> str:
-        """Gets the UUID of a Minecraft player with the given username.
-        Parameters
-        ----------
-        username: :class:`str`
-            The username of the player.
-        Returns
-        -------
-        :class:`str`
-            The UUID of the player.
-        Raises
-        ------
-        ConnectionError
-            The aiohttp session has not been instantiated.
-        InvalidMinecraftUsername
-            The given username contained special characters that weren't valid.
-        KeyError
-            The given username was invalid.
-        """
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         if not username.isalnum() and "_" not in username:
@@ -154,25 +136,6 @@ class FarmingCouncil(commands.Bot):
             return js["id"]
 
     async def get_hypixel_player(self, uuid: str) -> HypixelPlayer:
-        """Gets a Hypixel player object from the given UUID.
-
-        Parameters
-        ----------
-        uuid: :class:`str`
-            The UUID of the player.
-
-        Returns
-        -------
-        :class:`HypixelPlayer`
-            The constructed player object.
-
-        Raises
-        ------
-        ConnectionError
-            The aiohttp session has not been instantiated.
-        PlayerNotFoundError
-            The player could not be located by the Hypixel API.
-        """
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
@@ -190,27 +153,6 @@ class FarmingCouncil(commands.Bot):
             )
 
     async def get_skyblock_data(self, uuid: str, profile: str | None) -> HypixelPlayer:
-        """Gets a player's SkyBolock data from the given UUID
-
-        Parameters
-        ----------
-        uuid: :class:`str`
-            The UUID of the player.
-        profile: Union[:class:`str`, :class:None]
-            The profile name.
-
-        Returns
-        -------
-        :class:`dict`
-            The profile data returned by the API
-
-        Raises
-        ------
-        ConnectionError
-            The aiohttp session has not been instantiated.
-        PlayerNotFoundError
-            The player could not be located by the Hypixel API.
-        """
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
@@ -248,11 +190,27 @@ class FarmingCouncil(commands.Bot):
                 i += 1
 
             return profiles[latest_profile_index]["members"][uuid]
-    async def get_skyblock_data_SLOTHPIXEL(self, ign: str, profile: str | None, uuid: str) -> HypixelPlayer:
+    async def get_auction(self, id:str):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/profile/{ign}/{profile}",
+            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}",
+            headers={"API-Key": self.API_KEY}
+        ) as req:
+            try:
+                info = await req.json()
+            except:
+                raise HypixelIsDown()
+            return info
+    async def get_skyblock_data_SLOTHPIXEL(self, ign: str, profile: str | None, uuid: str) -> HypixelPlayer:
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        if profile == 0:
+            url = f"https://api.slothpixel.me/api/skyblock/profile/{uuid}"
+        else:
+            url = f"https://api.slothpixel.me/api/skyblock/profile/{ign}/{profile}"
+        async with self.session.get(
+            f"{url}",
             headers={"API-Key": self.API_KEY}
         ) as req:
             try:
@@ -273,19 +231,17 @@ class FarmingCouncil(commands.Bot):
                 raise HypixelIsDown()
             return info
     async def get_most_recent_profile(self, uuid):
+        print(uuid)
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.hypixel.net/skyblock/profiles?uuid={uuid}",
+            f"https://api.slothpixel.me/api/skyblock/profiles/{uuid}",
             headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
             except:
                 raise HypixelIsDown()
-
-            if not info["success"] or not info["profiles"]:
-                raise PlayerNotFoundError(uuid=uuid)
 
             profiles = info["profiles"]
             if len(profiles) == 0:
