@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 main_guild = discord.Object(1020742260683448450)
 test_guild = discord.Object(1040291074410819594)
 
+
 class Verification(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
         self.bot: FarmingCouncil = bot
