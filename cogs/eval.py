@@ -158,7 +158,7 @@ class eval(commands.Cog):
     async def evaluate(self, interaction: discord.Interaction, ign: str = "", profile: str = None):
         #* Get skyblock data
         await self.bot.command_counter(interaction)
-        embed = discord.Embed(title = "Loading", description="Evaluating your Hoe's . . .", color=0x2F3136)
+        embed = discord.Embed(title = "Loading", description="Evaluating your Farming tool's . . .", color=0x2F3136)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -238,6 +238,12 @@ class eval(commands.Cog):
                 7: 1500000, 8: 5000000, 9: 20000000, 
                 10: 100000000
             }
+            actualROMAN = {
+                "I": 0, "II": 1000,"III": 5000, 
+                "IV": 25000, "V": 100000, "VI": 300000, 
+                "VII": 1500000,"VIII": 5000000, "IX": 20000000, 
+                "X": 100000000
+            }
             for hoe in ownedHoes:
                 hoeStats = ownedHoes[hoe]
                 for item in hoeStats["lore"]:
@@ -245,8 +251,10 @@ class eval(commands.Cog):
                         try:
                             hoeCultivating = int((item.split("§")[2][1:]).replace(",", ""))
                         except:
-                            hoeCultivating = 0
-                            pass
+                            try:
+                                hoeCultivating = actualROMAN[(item.split(" ")[1])]
+                            except:
+                                hoeCUltivating = 0
                 try:
                     hoeCultivating = int(hoeCultivating)
                 except:
@@ -257,7 +265,6 @@ class eval(commands.Cog):
                         baseHoePrice = hoes["starting_bid"]
                         theoreticalPrice = hoes["starting_bid"]
                         break
-                print(f"__**{hoe}**__")
                 try:
                     tier = int(hoe.split("_")[2])
                 except:
@@ -283,13 +290,17 @@ class eval(commands.Cog):
                         else:
                             enchantCost += bazaar[f"{bazaarEnchants[enchant]}"]["quick_status"]["sellPrice"]
                 enchantedHoePrice = baseHoePrice + enchantCost
-                auctionHoes = (await self.bot.get_auction(hoe))["auctions"]
+                auctionHoes = (await self.bot.get_past_auction(hoe))
                 averageCultivating = []
                 for auction in auctionHoes:
-                    if auction["bin"] == True:  
-                        price = auction["starting_bid"]
+                    if auction["bin"] == True and str(auction["bids"]) != "null":  
+                        price = auction["startingBid"]
+                        e = {}
                         try:
-                            enchants = auction["item"]["attributes"]['enchantments']
+                            enchants = auction['enchantments']
+                            for dictionary in enchants:
+                                e[dictionary["type"]] = dictionary["level"]
+                            enchants = e
                         except KeyError:
                             enchants = {}
                         enchantCost = 0
@@ -299,19 +310,17 @@ class eval(commands.Cog):
                                     enchantCost += bazaar[f"{bazaarEnchants[enchant]}{enchants[enchant]}"]["quick_status"]["sellPrice"]
                                 else:
                                     enchantCost += bazaar[f"{bazaarEnchants[enchant]}"]["quick_status"]["sellPrice"]
-                        price = price - enchantCost - upgradeCost - theoreticalPrice
-                        for item in auction["item"]["lore"]:
-                            if "Cultivating" in item:
-                                try:
-                                    auctionHoeCultivating = int((item.split("§")[2][1:]).replace(",", ""))
-                                except:
-                                    auctionHoeCultivating = 0
-                                    pass
+                        prices = price - enchantCost - upgradeCost - theoreticalPrice
                         try:
-                            auctionHoeCultivating = int(auctionHoeCultivating)
+                            auctionHoeCultivating = auction["nbtData"]["data"]["farmed_cultivating"]
                         except:
                             auctionHoeCultivating = 0
-                        counterToCoinPrice = auctionHoeCultivating/price
+                        try:
+                            counterToCoinPrice = auctionHoeCultivating/prices
+                            if counterToCoinPrice <= 0:
+                                counterToCoinPrice = 1
+                        except:
+                            counterToCoinPrice = 1
                         if counterToCoinPrice > 0:
                             averageCultivating.append(counterToCoinPrice)
                 try:
@@ -343,7 +352,7 @@ class eval(commands.Cog):
                 elif "cactus" in name.lower():
                     name = str(discord.PartialEmoji.from_str("<:Cactus:1042829821971025951>")) +" "+ name
                 try:
-                    send.append([name, f"Cultivating: **{hoeCultivating:,}**\nPrice: **{round(finalHoePrice, 2):,}**"])
+                    send.append([name, f"Cultivating: **{hoeCultivating:,}**\nPrice: **{round(enchantedHoePrice, 2):,}**"])
                 except:
                     send.append([name, f"Not enough data on the auction house."])
         except Exception as e:

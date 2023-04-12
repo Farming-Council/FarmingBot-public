@@ -202,6 +202,18 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info
+    async def get_past_auction(self, id:str):
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        async with self.session.get(
+            f"https://sky.coflnet.com/api/auctions/tag/{id}/sold?page=0&pageSize=100",
+            headers={"API-Key": self.API_KEY}
+        ) as req:
+            try:
+                info = await req.json()
+            except:
+                raise HypixelIsDown()
+            return info
     async def get_bazzar_data(self):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
@@ -309,17 +321,23 @@ class FarmingCouncil(commands.Bot):
             },
             "MELON": {
                 "tier1": {
-                    "ENCHANTED_MELON_BLOCK": 64
+            
                 },
                 "tier2": {
+                    "ENCHANTED_MELON_BLOCK": 64
+                },
+                "tier3": {
                     "ENCHANTED_MELON_BLOCK": 192
                 }
             },
             "PUMPKIN": {
                 "tier1": {
-                    "POLISHED_PUMPKIN": 16
+            
                 },
                 "tier2": {
+                    "POLISHED_PUMPKIN": 16
+                },
+                "tier3": {
                     "POLISHED_PUMPKIN": 48
                 }
             },
