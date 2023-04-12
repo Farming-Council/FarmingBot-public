@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 main_guild = discord.Object(1020742260683448450)
 test_guild = discord.Object(1040291074410819594)
 
+
 class Verification(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
         self.bot: FarmingCouncil = bot
@@ -105,6 +106,10 @@ class Verification(commands.Cog):
         if profile == None:
             profile = 0
         try:
+            account = await self.bot.get_hypixel_player(uuid)
+            if profile == None:
+                profile = await self.bot.get_most_recent_profile(uuid)
+            await self.bot.get_skyblock_data_SLOTHPIXEL(uuid, profile, uuid)
             await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid)
         except ProfileNotFoundError:
             return await interaction.followup.send(
@@ -197,7 +202,6 @@ class Verification(commands.Cog):
                 colour=discord.Colour.red()
             )
         )
-        
 async def calculate_farming_weight(self, uuid):
     # Get profile and player data
     async with self.session.get(f"https://elitebot.dev/api/weight/{uuid}") as req:
@@ -207,6 +211,8 @@ async def calculate_farming_weight(self, uuid):
             return [0,"Hypixel is down"]
     return response['highest']['farming']['weight']
 
+
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Verification(bot))
+
 
