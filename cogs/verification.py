@@ -175,12 +175,12 @@ class Verification(commands.Cog):
                 weight = await calculate_farming_weight(self.bot, uuid)
                 role = get(interaction.guild.roles, name = "Certified Farmer")
                 try:
-                    if weight >= 2500:
+                    if weight >= 3500:
                         await interaction.user.add_roles(role)
                 except:
                     pass
                 try:
-                    if weight < 2500:
+                    if weight < 3500:
                         await interaction.user.remove_roles(role)
                 except:
                     pass
