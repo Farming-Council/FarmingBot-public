@@ -45,6 +45,52 @@ FARMING_ITEMS = [
     "THEORETICAL_HOE_CANE_2",
     "THEORETICAL_HOE_CANE_3"
 ]
+FARMING_NAMES = {
+    (
+        "THEORETICAL_HOE_WHEAT_1",
+        "THEORETICAL_HOE_WHEAT_2",
+        "THEORETICAL_HOE_WHEAT_3"
+    ): "WHEAT",
+    (
+        "THEORETICAL_HOE_POTATO_1",
+        "THEORETICAL_HOE_POTATO_2",
+        "THEORETICAL_HOE_POTATO_3" 
+    ): "POTATO",
+    (
+        "THEORETICAL_HOE_CANE_1",
+        "THEORETICAL_HOE_CANE_2",
+        "THEORETICAL_HOE_CANE_3"
+    ): "CANE",
+    (
+        "THEORETICAL_HOE_CARROT_1",
+        "THEORETICAL_HOE_CARROT_2",
+        "THEORETICAL_HOE_CARROT_3"
+    ): "CARROT",
+    (
+        "THEORETICAL_HOE_WARTS_1",
+        "THEORETICAL_HOE_WARTS_2",
+        "THEORETICAL_HOE_WARTS_3"
+    ): "WARTS",
+    (
+        "COCO_CHOPPER"
+    ): "COCO",
+    (
+        "MELON_DICER",
+        "MELON_DICER_2",
+        "MELON_DICER_3"
+    ): "MELON",
+    (
+        "PUMPKIN_DICER",
+        "PUMPKIN_DICER_2",
+        "PUMPKIN_DICER_3"
+    ): "PUMPKIN",
+    (
+        "FUNGI_CUTTER"
+    ): "MUSHROOMS",
+    (
+        "CACTUS_KNIFE"
+    ): "CACTUS"
+}
 
 def divide_chunks(l, n):
     for i in range(0, len(l), n):
@@ -120,6 +166,13 @@ class eval(commands.Cog):
         try:
             if ign == "":
                 ign = await self.bot.get_db_info(int(interaction.user.id))
+            if ign == None:
+                embed = discord.Embed(title= "Error", description="Name Invalid or Hypixel API is Down, retry later", color=0xFF0000)
+                embed.set_image(url='attachment://image.png')
+                embed.set_footer(text="Made by FarmingCouncil",
+                            icon_url="https://i.imgur.com/4YXjLqq.png")
+                await interaction.edit_original_response(embed=embed)
+                return
             uuid = await self.bot.get_uuid(ign)
             if profile == None:
                 profile = 0
@@ -133,7 +186,7 @@ class eval(commands.Cog):
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by FarmingCouncil",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
-            await interaction.response.send_message(embed=embed)
+            await interaction.edit_original_response(embed=embed)
             return
         
         #* Make giant list of all items in (inv, enderchest, etc.)
@@ -170,160 +223,104 @@ class eval(commands.Cog):
         
         #* Search the auction house for those hoes
         try:
-            ratios = {"Cultivating": .25, "Counter": .30, "Dedication": .12, "Replenish": .8, "Turbo": .8, "Harvesting": .5, "Reforge": .12}
-            roman = {"I": 0, "II": 1000, "III": 5000,
-                     "IV": 25000, "V": 100000, "VI": 300000,
-                     "VII": 1500000, "VIII": 5000000, "IX": 20000000,
-                     "X": 100000000}
+            theoreticalHoes = (await self.bot.get_auction("THEORETICAL_HOE"))["auctions"]
+            bazaar = await self.bot.get_bazzar_data()
+            bazaarEnchants = {
+                    "dedication": "ENCHANTMENT_DEDICATION_1",
+                    "turbo_": "ENCHANTMENT_TURBO_",
+                    "replenish": "ENCHANTMENT_REPLENISH_1",
+                    "harvesting": "ENCHANTMENT_HARVESTING_",
+                    "cultivating": "ENCHANTMENT_CULTIVATING_1"
+            }
+            roman = {
+                1: 0, 2: 1000, 3: 5000, 
+                4: 25000, 5: 100000, 6: 300000, 
+                7: 1500000, 8: 5000000, 9: 20000000, 
+                10: 100000000
+            }
             for hoe in ownedHoes:
-                hoeCounter = "0"
-                hoeCultivating = "0"
-                allAuctionHoes = {}
                 hoeStats = ownedHoes[hoe]
-                hoeAuctions = await self.bot.get_auction(hoe)
                 for item in hoeStats["lore"]:
                     if "Cultivating" in item:
                         try:
-                            hoeCultivating = item.split("§")[2][1:]
-                            if hoeCultivating == ",":
-                                hoeCultivating = item.split(" ")[1].split("§")[0]
-                                hoeCultivating = roman[hoeCultivating]
+                            hoeCultivating = int((item.split("§")[2][1:]).replace(",", ""))
                         except:
-                            hoeCultivating = "0" 
+                            hoeCultivating = 0
                             pass
-                    elif "Counter:" in item:
-                        hoeCounter = item.split("§e")[1].split(" ")[0]
                 try:
-                    hoeReforge = hoeStats["attributes"]["modifier"]
+                    hoeCultivating = int(hoeCultivating)
                 except:
-                    hoeReforge = False
+                    hoeCultivating = 0
+                allAuctionHoes = {}
+                for hoes in theoreticalHoes:
+                    if hoes["bin"] == True:
+                        baseHoePrice = hoes["starting_bid"]
+                        theoreticalPrice = hoes["starting_bid"]
+                        break
+                print(f"__**{hoe}**__")
                 try:
-                    for enchantment in hoeStats["attributes"]["enchantments"]:
-                        level = hoeStats["attributes"]["enchantments"][enchantment]
-                        if "harvesting" in enchantment:
-                            hoeHarvesting = level
-                        elif "turbo_" in enchantment:
-                            hoeTurbo = level
-                        if "replenish" in enchantment:
-                            hoeReplenish = True
-                        else:
-                            hoeReplenish = False
-                        if "dedication" in enchantment:
-                                hoeDedication = level
+                    tier = int(hoe.split("_")[2])
                 except:
-                    pass
-                for auction in hoeAuctions["auctions"]:
-                    cost = auction['starting_bid']
-                    cost = cost/100
-                    if auction["bin"] == False:
-                        continue
-                    auction = auction["item"]
-                    for item in auction["lore"]:
-                        if "Cultivating" in item:
-                            try:
-                                auctionHoeCultivating = item.split("§")[2][1:]
-                                if auctionHoeCultivating == ",":
-                                    auctionHoeCultivating = item.split(" ")[1].split("§")[0]
-                                    auctionHoeCultivating = roman[auctionHoeCultivating]
-                            except:
-                                auctionHoeCultivating = "0"
-                                pass
-                        elif "Counter:" in item:
-                            auctionHoeCounter = item.split("§e")[1].split(" ")[0]
                     try:
-                        auctionHoeReforge = auction["attributes"]["modifier"]
+                        tier = int(hoe.split("_")[3])
                     except:
-                        auctionHoeReforge = False
-                    try:
-                        for enchantment in auction["attributes"]["enchantments"]:
-                            level = auction["attributes"]["enchantments"][enchantment]
-                            if "harvesting" in enchantment:
-                                auctionHoeHarvesting = level
-                            elif "turbo_" in enchantment:
-                                auctionHoeTurbo = level
-                            if "replenish" in enchantment:
-                                auctionHoeReplenish = True
-                            else:
-                                auctionHoeReplenish = False
-                            if "dedication" in enchantment:
-                                auctionHoeDedication = level
-                    except:
-                        pass
-                    try:
-                        cult = [int(auctionHoeCultivating.replace(',', '')), int(hoeCultivating.replace(',', ''))]
-                    except:
-                        cult = 0.00
-                        hoeCultivating = 0
-                        auctionHoeCultivating = 0
-                    try:
-                        counter = [int(auctionHoeCounter.replace(',', '')), int(hoeCounter.replace(',', ''))]
-                    except:
-                        hoeCounter = 0
-                        auctionHoeCounter = 0
-                        counter = 0.00
-                    try:
-                        reforge = [auctionHoeReforge, hoeReforge]
-                    except:
-                        pass
-                    try:
-                        harvesting = [auctionHoeHarvesting, hoeHarvesting]
-                    except:
-                        pass
-                    try:
-                        turbo = [auctionHoeTurbo, hoeTurbo]
-                    except:
-                        pass
-                    try:
-                        replenish = [auctionHoeReplenish, hoeReplenish]
-                    except:
-                        pass
-                    try:
-                        dedication = [auctionHoeDedication, hoeDedication]
-                    except:
-                        pass
-                    try:
-                        cultScore = min(cult)/max(cult)*100*ratios["Cultivating"]
-                    except:
-                        cultScore = 0.0
-                    try:
-                        counterScore = min(counter)/max(counter)*100*ratios["Counter"]
-                    except:
-                        counterScore = 0.0
-                    try:
-                        if reforge[0] == reforge[1]:
-                            reforgeScore = 100*ratios["Reforge"]
+                        tier = 1
+                for crop in FARMING_NAMES:
+                    if hoe in crop:
+                        cropName = FARMING_NAMES[crop]
+                        break
+                upgradeCost = await self.bot.hoeTierPrice(f"tier{tier}", cropName, bazaar)
+                baseHoePrice = baseHoePrice +  upgradeCost
+                try:
+                    hoeEnchants = ownedHoes[hoe]["attributes"]['enchantments']
+                except KeyError:
+                    hoeEnchants = {}
+                enchantCost = 0
+                for enchant in bazaarEnchants:
+                    if enchant in list(dict(hoeEnchants).keys()):
+                        if enchant not in ["dedication", "cultivating", "replenish"]:
+                            enchantCost += bazaar[f"{bazaarEnchants[enchant]}{hoeEnchants[enchant]}"]["quick_status"]["sellPrice"]
                         else:
-                            reforgeScore = 0.0
-                    except:
-                        reforgeScore = 0.0
-                    try:
-                        harvestingScore = min(harvesting)/max(harvesting)*10*ratios["Harvesting"]
-                    except:
-                        harvestingScore = 0.0
-                    try:
-                        turboScore = min(turbo)/max(turbo)*10*ratios["Turbo"]
-                    except:
-                        turboScore = 0.0
-                    try:
-                        if replenish[0] == replenish[1]:
-                            replenishScore = 10*ratios["Replenish"]
-                        else:
-                            replenishScore = 0.0
-                    except:
-                        replenishScore = 0.0
-                    try:
-                        dedicationScore = min(dedication)/max(dedication)*10*ratios["Dedication"]
-                    except:
-                        dedicationScore = 0.0
-                    hoeScore = cultScore+counterScore+reforgeScore+harvestingScore+turboScore+replenishScore+dedicationScore
-                    hoePriceRange = 100-hoeScore
-                    hoeMinCost = str(round(int(cost)*int(hoePriceRange), 2)-int(cost))
-                    hoeMaxCost = str(round(int(cost)*int(hoePriceRange), 2)+int(cost))
-                    if hoeScore < 20:
-                        allAuctionHoes[hoeScore] = f"Not enough data on the auction house."
-                    else:
-                        allAuctionHoes[hoeScore] = f"Counter: **{hoeCounter}**\nCultivating: **{hoeCultivating}**\nEstimated Pricerange: **{numerize.numerize(int(hoeMinCost))} - {numerize.numerize(int(hoeMaxCost))}**"
-                    allAuctionHoes = dict(reversed(allAuctionHoes.items()))
+                            enchantCost += bazaar[f"{bazaarEnchants[enchant]}"]["quick_status"]["sellPrice"]
+                enchantedHoePrice = baseHoePrice + enchantCost
+                auctionHoes = (await self.bot.get_auction(hoe))["auctions"]
+                averageCultivating = []
+                for auction in auctionHoes:
+                    if auction["bin"] == True:  
+                        price = auction["starting_bid"]
+                        try:
+                            enchants = auction["item"]["attributes"]['enchantments']
+                        except KeyError:
+                            enchants = {}
+                        enchantCost = 0
+                        for enchant in bazaarEnchants:
+                            if enchant in list(dict(enchants).keys()):
+                                if enchant not in ["dedication", "cultivating", "replenish"]:
+                                    enchantCost += bazaar[f"{bazaarEnchants[enchant]}{enchants[enchant]}"]["quick_status"]["sellPrice"]
+                                else:
+                                    enchantCost += bazaar[f"{bazaarEnchants[enchant]}"]["quick_status"]["sellPrice"]
+                        price = price - enchantCost - upgradeCost - theoreticalPrice
+                        for item in auction["item"]["lore"]:
+                            if "Cultivating" in item:
+                                try:
+                                    auctionHoeCultivating = int((item.split("§")[2][1:]).replace(",", ""))
+                                except:
+                                    auctionHoeCultivating = 0
+                                    pass
+                        try:
+                            auctionHoeCultivating = int(auctionHoeCultivating)
+                        except:
+                            auctionHoeCultivating = 0
+                        counterToCoinPrice = auctionHoeCultivating/price
+                        if counterToCoinPrice > 0:
+                            averageCultivating.append(counterToCoinPrice)
+                try:
+                    averagePrice = (sum(averageCultivating) / float(len(averageCultivating)))
+                except:
+                    averagePrice = 1
+                hoeCounterPrice = averagePrice * hoeCultivating
+                finalHoePrice = enchantedHoePrice + hoeCounterPrice
+                
                 name = hoeStats['name'][2:]
                 if "sugar" in name.lower():                
                     name = str(discord.PartialEmoji.from_str("<:sugar_cane:1042829849456287854>")) +" "+ name
@@ -346,7 +343,7 @@ class eval(commands.Cog):
                 elif "cactus" in name.lower():
                     name = str(discord.PartialEmoji.from_str("<:Cactus:1042829821971025951>")) +" "+ name
                 try:
-                    send.append([name, allAuctionHoes[next(iter(allAuctionHoes))]])
+                    send.append([name, f"Cultivating: **{hoeCultivating:,}**\nPrice: **{round(finalHoePrice, 2):,}**"])
                 except:
                     send.append([name, f"Not enough data on the auction house."])
         except Exception as e:

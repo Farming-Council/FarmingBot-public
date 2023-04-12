@@ -10,7 +10,9 @@ from discord.ext import commands
 
 from errors import PlayerNotFoundError, InvalidMinecraftUsername, ProfileNotFoundError, HypixelIsDown
 import pymysql
+from discord.utils import get
 
+import sys, os
 if TYPE_CHECKING:
     import aiomysql
     from utils import FarmingCouncil
@@ -100,11 +102,10 @@ class Verification(commands.Cog):
                 )
             )
         assert interaction.guild is not None
+        if profile == None:
+            profile = 0
         try:
-            account = await self.bot.get_hypixel_player(uuid)
-            if profile == None:
-                profile = await self.bot.get_most_recent_profile(uuid)
-            await self.bot.get_skyblock_data(uuid, profile)
+            await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid)
         except ProfileNotFoundError:
             return await interaction.followup.send(
                 embed=discord.Embed(
@@ -165,10 +166,29 @@ class Verification(commands.Cog):
                     return
             embed=discord.Embed(
                 title="Success",
-                description=f"Verified as {player.username} ({profile})!",
+                description=f"Linked to `{player.username}`!",
                 colour=0x2F3136
             )
             embed.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
+            try:
+                uuid = await self.bot.get_uuid(ign)
+                weight = await calculate_farming_weight(self.bot, uuid)
+                role = get(interaction.guild.roles, name = "Certified Farmer")
+                try:
+                    if weight >= 2500:
+                        await interaction.user.add_roles(role)
+                except:
+                    pass
+                try:
+                    if weight < 2500:
+                        await interaction.user.remove_roles(role)
+                except:
+                    pass
+            except Exception as e:
+                print(e)
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
             return await interaction.followup.send(embed=embed)
         await interaction.followup.send(
             embed=discord.Embed(
@@ -177,6 +197,15 @@ class Verification(commands.Cog):
                 colour=discord.Colour.red()
             )
         )
+        
+async def calculate_farming_weight(self, uuid):
+    # Get profile and player data
+    async with self.session.get(f"https://elitebot.dev/api/weight/{uuid}") as req:
+        try:
+            response = await req.json()
+        except Exception as e:
+            return [0,"Hypixel is down"]
+    return response['highest']['farming']['weight']
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Verification(bot))
