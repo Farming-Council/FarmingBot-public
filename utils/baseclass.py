@@ -194,11 +194,11 @@ class FarmingCouncil(commands.Bot):
                 i += 1
 
             return profiles[latest_profile_index]["members"][uuid]
-    async def get_auction(self, id:str):
+    async def get_auction(self, id:str, sortOrder="asc"):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}",
+            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}&sortOrder={sortOrder}",
             headers={"API-Key": self.API_KEY}
         ) as req:
             try:
@@ -206,6 +206,174 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info
+    async def get_past_auction(self, id:str):
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        async with self.session.get(
+            f"https://sky.coflnet.com/api/auctions/tag/{id}/sold?page=0&pageSize=100",
+            headers={"API-Key": self.API_KEY}
+        ) as req:
+            try:
+                info = await req.json()
+            except:
+                raise HypixelIsDown()
+            return info
+    async def get_bazzar_data(self):
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        async with self.session.get(
+            f"https://api.slothpixel.me/api/skyblock/bazaar",
+            headers={"API-Key": self.API_KEY}
+        ) as req:
+            try:
+                info = await req.json()
+            except:
+                raise HypixelIsDown()
+            return info
+    async def hoeTierPrice(self, tier, cropType, bazaar):
+        typeHoe = {
+            "WHEAT": {
+                "tier1": {
+                    "WHEAT": 512
+                },
+                "tier2": {
+                    "WHEAT": 512,
+                    "ENCHANTED_HAY_BLOCK": 256,
+                    "JACOBS_TICKET": 64
+                },
+                "tier3": {
+                    "WHEAT": 512,
+                    "ENCHANTED_HAY_BLOCK": 256,
+                    "TIGHTLY_TIED_HAY_BALE": 64,
+                    "JACOBS_TICKET": 320
+                }
+            },
+            "CARROT": {
+                "tier1": {
+                    "CARROT_ITEM": 512,
+                },
+                "tier2": {
+                    "CARROT_ITEM": 512,
+                    "ENCHANTED_CARROT": 256,
+                    "JACOBS_TICKET": 64
+                },
+                "tier3": {
+                    "CARROT_ITEM": 512,
+                    "ENCHANTED_CARROT": 256,
+                    "ENCHANTED_GOLDEN_CARROT": 256,
+                    "JACOBS_TICKET": 320
+                }
+            },
+            "POTATO": {
+                "tier1": {
+                    "POTATO_ITEM": 512,
+                },
+                "tier2": {
+                    "POTATO_ITEM": 512,
+                    "ENCHANTED_POTATO": 256,
+                    "JACOBS_TICKET": 64
+                },
+                "tier3": {
+                    "POTATO_ITEM": 512,
+                    "ENCHANTED_POTATO": 256,
+                    "ENCHANTED_BAKED_POTATO": 256,
+                    "JACOBS_TICKET": 320
+                }
+            },
+            "CANE": {
+                "tier1": {
+                    "SUGAR_CANE": 512
+                },
+                "tier2": {
+                    "SUGAR_CANE": 512,
+                    "ENCHANTED_SUGAR": 256,
+                    "JACOBS_TICKET": 64
+                },
+                "tier3": {
+                    "SUGAR_CANE": 512,
+                    "ENCHANTED_SUGAR": 256,
+                    "ENCHANTED_SUGAR_CANE": 256,
+                    "JACOBS_TICKET": 320
+                }
+            },
+            "WARTS": {
+                "tier1": {
+                    "NETHER_STALK": 512
+                },
+                "tier2": {
+                    "NETHER_STALK": 512,
+                    "ENCHANTED_NETHER_STALK": 256,
+                    "JACOBS_TICKET": 64
+                },
+                "tier3": {
+                    "NETHER_STALK": 512,
+                    "ENCHANTED_NETHER_STALK": 256,
+                    "MUTANT_NETHER_STALK": 256,
+                    "JACOBS_TICKET": 320
+                }
+            },
+            "COCO": {
+                "tier1": {
+            
+                },
+                "tier2": {
+                    
+                },
+                "tier3": {
+                    
+                }
+            },
+            "MELON": {
+                "tier1": {
+            
+                },
+                "tier2": {
+                    "ENCHANTED_MELON_BLOCK": 64
+                },
+                "tier3": {
+                    "ENCHANTED_MELON_BLOCK": 192
+                }
+            },
+            "PUMPKIN": {
+                "tier1": {
+            
+                },
+                "tier2": {
+                    "POLISHED_PUMPKIN": 16
+                },
+                "tier3": {
+                    "POLISHED_PUMPKIN": 48
+                }
+            },
+            "MUSHROOMS": {
+                "tier1": {
+            
+                },
+                "tier2": {
+                    
+                },
+                "tier3": {
+                    
+                }
+            },
+            "CACTUS": {
+                "tier1": {
+            
+                },
+                "tier2": {
+                    
+                },
+                "tier3": {
+                    
+                }
+            }
+        }
+        cost = typeHoe[cropType][tier]
+        upgradeCost = 0
+        for item in cost:
+            upgradeCost += bazaar[item]["quick_status"]["sellPrice"] * cost[item]
+        return upgradeCost
+            
     async def get_skyblock_data_SLOTHPIXEL(self, ign: str, profile: str | None, uuid: str) -> HypixelPlayer:
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
@@ -222,18 +390,14 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info["members"][uuid]
-    async def get_bazzar_data(self):
-        if self.session is None:
-            raise ConnectionError("aiohttp session has not been set")
-        async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/bazaar",
-            headers={"API-Key": self.API_KEY}
-        ) as req:
+    async def calculate_farming_weight(self, uuid):
+        # Get profile and player data
+        async with self.session.get(f"https://elitebot.dev/api/weight/{uuid}") as req:
             try:
-                info = await req.json()
-            except:
-                raise HypixelIsDown()
-            return info
+                response = await req.json()
+            except Exception as e:
+                return [0,"Hypixel is down"]
+        return response['highest']['farming']['weight']
     async def get_most_recent_profile(self, uuid):
         print(uuid)
         if self.session is None:
