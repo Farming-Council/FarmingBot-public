@@ -106,10 +106,8 @@ class Verification(commands.Cog):
         if profile == None:
             profile = 0
         try:
-            account = await self.bot.get_hypixel_player(uuid)
             if profile == None:
                 profile = await self.bot.get_most_recent_profile(uuid)
-            await self.bot.get_skyblock_data_SLOTHPIXEL(uuid, profile, uuid)
             await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid)
         except ProfileNotFoundError:
             return await interaction.followup.send(

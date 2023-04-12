@@ -178,7 +178,7 @@ class FarmingCouncil(commands.Bot):
             if profile is not None:
                 for profileData in profiles:
                     if profileData["cute_name"].lower() == profile.lower():
-                        return profileData["members"][uuid]
+                        return profileData
                 raise ProfileNotFoundError(uuid=uuid, profile=profile)
 
             latest_profile_index = 0
@@ -193,7 +193,7 @@ class FarmingCouncil(commands.Bot):
                         latest_profile_last_save = last_save
                 i += 1
 
-            return profiles[latest_profile_index]["members"][uuid]
+            return profiles[latest_profile_index]
     async def get_auction(self, id:str, sortOrder="asc"):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
