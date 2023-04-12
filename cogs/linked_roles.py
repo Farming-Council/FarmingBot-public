@@ -30,6 +30,7 @@ class Roles(commands.Cog):
             else:
                 embed = discord.Embed(title="Error", description="An error occurred while updating your roles.", color=discord.Color.red())
                 await interaction.followup.send(embed=embed)
+        uuid = await self.bot.get_uuid(ign)
 
 
 async def setup(bot: FarmingCouncil) -> None:
