@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 from discord.ext import commands
-
+import discord.utils 
+from discord.utils import get
 if TYPE_CHECKING:
     from utils import FarmingCouncil
 
@@ -30,7 +31,23 @@ class Roles(commands.Cog):
             else:
                 embed = discord.Embed(title="Error", description="An error occurred while updating your roles.", color=discord.Color.red())
                 await interaction.followup.send(embed=embed)
+        ign = await self.bot.get_db_info(interaction.user.id)
+        if type(ign) == int:
+            ign = interaction.user.display_name
         uuid = await self.bot.get_uuid(ign)
+        weight = await self.bot.calculate_farming_weight(self.bot, uuid)
+        role = get(interaction.guild.roles, name = "Certified Farmer")
+        try:
+            if weight >= 3500:
+                await interaction.user.add_roles(role)
+        except:
+            pass
+        try:
+            if weight < 3500:
+                await interaction.user.remove_roles(role)
+        except:
+            pass
+            
 
 
 async def setup(bot: FarmingCouncil) -> None:
