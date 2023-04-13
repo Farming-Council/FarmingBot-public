@@ -22,9 +22,9 @@ class Weight(commands.Cog):
             ign = interaction.user.display_name
         uuid = await self.bot.get_uuid(ign)
         weight = await self.bot.calculate_farming_weight(uuid)
-        embed = discord.Embed(title="Weight",description=f"{ign}'s farming weight is **{round(weight, 2)}**", color=0x2F3136)
+        embed = discord.Embed(title="Weight",description=f"**{ign}** has `{round(weight, 2)}` farming weight!", color=0x2F3136)
         embed.set_image(url='attachment://image.png')
-        embed.set_footer(text="Made by FarmingCouncil",
+        embed.set_footer(text="Calculations by Bankhier#2004",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=embed)
 
