@@ -15,7 +15,7 @@ class Weight(commands.Cog):
 
     @app_commands.command(description="Gets a users weight")
     @app_commands.guild_only()
-    async def weight(self, interaction: discord.Interaction, ign: str=None, profile: str=""):
+    async def weight(self, interaction: discord.Interaction, ign: str, profile: str=""):
         if ign is None:
             ign = await self.bot.get_db_info(interaction.user.id)
         if type(ign) == int or ign == None:
@@ -27,8 +27,6 @@ class Weight(commands.Cog):
         embed.set_footer(text="Calculations by Bankhier#2004",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=embed)
-
-
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Weight(bot))
