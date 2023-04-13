@@ -86,14 +86,6 @@ class Verification(commands.Cog):
             )
         try:
             player = await self.bot.get_hypixel_player(uuid)
-        except PlayerNotFoundError:
-            return await interaction.followup.send(
-                embed=discord.Embed(
-                    title="\U0000274c Failed",
-                    description=f"Player `{ign}` not found.",
-                    color=discord.Colour.red()
-                )
-            )
         except KeyError:
             return await interaction.followup.send(
                 embed=discord.Embed(

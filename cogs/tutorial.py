@@ -21,7 +21,7 @@ class CropView(discord.ui.View):
 
     @discord.ui.button(label='Written', style=discord.ButtonStyle.danger)
     async def written(self, interaction: discord.Interaction, button: discord.ui.Button):
-        e = discord.Embed(title=f"{self.crop} Guide", description=f"To look at the written guide on `{self.crop}`, join our support server by clicking [**here**](https://discord.gg/farmingcouncil). Then head to the **Guides and Tutorials Category** where you will find the {self.crop} guide channel.", color=0x2F3136)
+        e = discord.Embed(title=f"{self.crop} Guide", description=f"To look at the written guide on `{self.crop}`, join our support server by clicking [**here**](https://discord.gg/farmers). Then head to the **Guides and Tutorials Category** where you will find the {self.crop} guide channel.", color=0x2F3136)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)
 
