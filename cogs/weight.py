@@ -17,11 +17,15 @@ class Weight(commands.Cog):
     @app_commands.command(description="Gets a users weight")
     @app_commands.guild_only()
     async def weight(self, interaction: discord.Interaction, ign: str, profile: str=""):
-        if ign is None:
-            ign = await self.bot.get_db_info(interaction.user.id)
-        if type(ign) == int or ign == None:
-            ign = interaction.user.display_name
-        uuid = await self.bot.get_uuid(ign)
+        if ign:
+            uuid = await self.bot.get_uuid(ign)
+        else:
+            uuid = await self.bot.get_db_info(interaction.user.id)
+            ign = await self.bot.get_ign(uuid)
+        if not uuid:
+            await interaction.response.send_message("You must provide a username or link your account using `/link`")
+            return
+        
         if profile == None:
             profile = await self.bot.get_most_recent_profile(uuid)
         weight = await calculate_farming_weight(self.bot, ign, profile)
