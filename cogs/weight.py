@@ -84,10 +84,10 @@ async def calculate_farming_weight(self, ign,profile = ""):
         total= cactus + carrot + cocoa + melon + wart + potato + pumpkin + sugar + wheat
 
         # Caculate weight for mushrooms dynamically
-        doubleBreakRatio = (cactus/177254 + sugar/200000) / total
-        normalRatio = (total - cactus/177254 - sugar/200000) / total
-        mushroomWeight = doubleBreakRatio * (mushroom / (2 * 180356)) + normalRatio * (mushroom / 180356)
-
+        doubleBreakRatio = (cactus/180356 + sugar/200000) / total
+        normalRatio = (total - cactus/90178 - sugar/200000) / total
+        mushroomWeight = doubleBreakRatio * (mushroom / (2 * 180356)) + normalRatio * (mushroom / 90178)
+        
         weight +=mushroomWeight
         weight += total
 
