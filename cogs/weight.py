@@ -16,7 +16,12 @@ class Weight(commands.Cog):
 
     @app_commands.command(description="Gets a users weight")
     @app_commands.guild_only()
-    async def weight(self, interaction: discord.Interaction, ign: str, profile: str=""):
+    async def weight(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
+        embed = discord.Embed(title=f"Loading",description=f"""Checking your Collections!""", color=0x2F3136)
+        embed.set_image(url='attachment://image.png')
+        embed.set_footer(text="Weight By Elite Bot",
+                        icon_url="https://i.imgur.com/4YXjLqq.png")
+        await interaction.response.send_message(embed=embed)
         if ign is None:
             ign = await self.bot.get_db_info(interaction.user.id)
         if type(ign) == int or ign == None:
@@ -26,11 +31,11 @@ class Weight(commands.Cog):
             profile = await self.bot.get_most_recent_profile(uuid)
         weight = await calculate_farming_weight(self.bot, ign, profile)
         weight = weight[1]
-        embed = discord.Embed(title=f"{ign}'s Weight",description=f"""Collection: **{round(weight["collection_total"]["total"], 2)}**\nFarming Levels: **{round(weight['farming_weight']['farming_weight'], 2)}**\nMinions: **{round(weight['minions']['minion_weight'], 2)}**\nJacob/Gold: **{round(weight["jacub"]['jacub_weight']+weight["gold"]["gold_weight"], 2)}**\n\nTotal: `{round(weight["total"], 2)}`""", color=0x2F3136)
+        embed = discord.Embed(title=f"{ign}'s Weight",description=f"""Collection: **{round(weight["collection_total"]["total"], 2)}**\nFarming Levels: **{round(weight['farming_weight']['farming_weight'], 2)}**\nMinions: **{round(weight['minions']['minion_weight'], 2)}**\nJacob/Gold: **{round(weight["jacub"]['jacub_weight']+weight["gold"]["gold_weight"], 2)}**\n\nTotal: `{round(weight["total"], 2)}`\n\nView full calculations on [elitebot.dev](https://elitebot.dev/)""", color=0x2F3136)
         embed.set_image(url='attachment://image.png')
-        embed.set_footer(text="Made by Farming Council",
+        embed.set_footer(text="Weight By Elite Bot",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
-        await interaction.response.send_message(embed=embed)
+        await interaction.edit_original_response(embed=embed)
 
 def try_it(member,collat):
     try:
@@ -87,7 +92,6 @@ async def calculate_farming_weight(self, ign,profile = ""):
         doubleBreakRatio = (cactus/180356 + sugar/200000) / total
         normalRatio = (total - cactus/90178 - sugar/200000) / total
         mushroomWeight = doubleBreakRatio * (mushroom / (2 * 180356)) + normalRatio * (mushroom / 90178)
-        
         weight +=mushroomWeight
         weight += total
 
@@ -135,8 +139,8 @@ async def calculate_farming_weight(self, ign,profile = ""):
             weight += 500
             gold_weight += 500
         else:
-            weight += gold*0.50
-            gold_weight += gold*0.50
+            gold = 50 * round(gold / 50)
+            gold_weight += gold / 50 *25
         
         return [1,{"profile":profile,"total":weight,"collection_total":{"total":total+mushroomWeight,"cactus":cactus,"carrot":carrot,"cocoa":cocoa,"melon":melon,"wart":wart,"potato":potato,"pumpkin":pumpkin,"sugar":sugar,"wheat":wheat,"mushroom":mushroomWeight},"farming_weight":{"farming_weight":farming_weight,"farming_level":farming_level},"minions":{"minion_weight":minion_weight,"minions":minions},"jacub":{"jacub_weight":jacub_weight,"jacub_perks":jacub_perks},"gold":{"golds":gold,"gold_weight":gold_weight}}]
     else:
