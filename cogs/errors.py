@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 import datetime
 import asyncio
+import sys
 
 
 class errors(commands.Cog):
@@ -51,12 +52,11 @@ class errors(commands.Cog):
                 except:
                     pass
             try:
-                embed = discord.Embed(title="Error", description=f"An error has occured: {error}", color=discord.Color.red())
-                embed.add_field(name="Command", value=f"{interaction.data['name']}")
-                embed.add_field(name="User", value=f"{interaction.user}")
-                embed.add_field(name="Guild", value=f"{interaction.guild}")
-                embed.add_field(name="Data", value=f"{interaction.data}")
-                embed.set_footer(text = f"{interaction.user.name}",icon_url=interaction.user.avatar.url)
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                send = f"Error: {error}\nCommand: {interaction.data['name']}\nGuild: {interaction.guild}\nFile: {fname}\nLine: {exc_tb.tb_lineno}\nData: {interaction.data}"
+                embed = discord.Embed(title="Error", description=f"```{send}```", color=discord.Color.red())
+                embed.set_footer(text = f"{interaction.user}",icon_url=interaction.user.avatar.url)
                 embed.timestamp = datetime.datetime.utcnow()
                 channel = self.bot.get_channel(1078460509872984126)
                 await channel.send(embed=embed)

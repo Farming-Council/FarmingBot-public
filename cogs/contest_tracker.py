@@ -40,8 +40,8 @@ class contesttracker(commands.Cog):
                 await interaction.edit_original_response(content="Name Invalid, try another IGN")
                 return
             contests = skyblock_data["jacob2"]["contests"]
-            currenttime = int(time.time())
-            currenttime = str(datetime.datetime.fromtimestamp(currenttime))
+            current_time = int(time.time())
+            current_time = str(datetime.datetime.fromtimestamp(current_time))
             time_period_fixed = ""
             amount = ""
             for i in time_period:
@@ -69,12 +69,12 @@ class contesttracker(commands.Cog):
                 day = day_data[0] + "_" + day_data[1]
                 skyblockday = day.split("_")
                 year, month, day = skyblockday[0], skyblockday[1], skyblockday[2]
-                epochSeconds = 1560275700 - 14400 - 432000 - 3600
-                totalDays = ((int(year)+1) * 372) + ((int(month)-1) * 31) + (int(day))
-                realLifeSeconds = ((totalDays * 20 ) * 60)
-                skyblockunix = epochSeconds + realLifeSeconds
-                skyblocktime = str(datetime.datetime.fromtimestamp(skyblockunix))
-                difference =  datetime.datetime.fromtimestamp(int(time.time())) - datetime.datetime.fromtimestamp(skyblockunix)
+                epoch_seconds = 1560275700 - 14400 - 432000 - 3600
+                total_days = ((int(year)+1) * 372) + ((int(month)-1) * 31) + (int(day))
+                real_life_seconds = ((total_days * 20 ) * 60)
+                skyblock_unix = epoch_seconds + real_life_seconds
+                skyblock_time = str(datetime.datetime.fromtimestamp(skyblock_unix))
+                difference =  datetime.datetime.fromtimestamp(int(time.time())) - datetime.datetime.fromtimestamp(skyblock_unix)
                 difference = str(difference)
                 hours = None
                 try: 
@@ -86,15 +86,14 @@ class contesttracker(commands.Cog):
                         hours = difference.split(" days, ")[0].split(":")[0]
                 if hours == None:
                     if days < amount:
-                        contestsInTimePeriod[skyblocktime] = day_data[2]
+                        contestsInTimePeriod[skyblock_time] = day_data[2]
                 else:
                     amount = 24*amount
                     if int(hours) < amount:
-                        contestsInTimePeriod[skyblocktime] = day_data[2]
+                        contestsInTimePeriod[skyblock_time] = day_data[2]
             send = {}
             for contest in contestsInTimePeriod:
                 contest = datetime.datetime.strptime(str(contest), '%Y-%m-%d %H:%M:%S')
-                
                 try:
                     send[contest.hour] = send[contest.hour] + 1
                 except:

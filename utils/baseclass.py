@@ -118,6 +118,8 @@ class FarmingCouncil(commands.Bot):
                 await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id, timestamp) VALUES (%s, %s, %s)", (name, int(interaction.user.id), int(time.time())))
                 await conn.commit()
                 
+                
+                
     async def get_commands(self):
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
@@ -126,6 +128,7 @@ class FarmingCouncil(commands.Bot):
                 await cursor.execute("select * from commandcounter")
                 commands = await cursor.fetchall()
         return commands
+
 
 
     async def get_uuid(self, username: str) -> str:
@@ -138,6 +141,8 @@ class FarmingCouncil(commands.Bot):
                 raise KeyError(f"Recieved status code: {req.status}")
             js = await req.json()
             return js["id"]
+
+
 
     async def get_hypixel_player(self, uuid: str) -> HypixelPlayer:
 
@@ -155,6 +160,8 @@ class FarmingCouncil(commands.Bot):
                 uuid=info["uuid"],
                 social_media=social_media
             )
+
+
 
     async def get_skyblock_data(self, uuid: str, profile: str | None) -> HypixelPlayer:
         if self.session is None:
@@ -194,6 +201,9 @@ class FarmingCouncil(commands.Bot):
                 i += 1
 
             return profiles[latest_profile_index]
+        
+        
+        
     async def get_auction(self, id:str, sortOrder="asc"):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
@@ -206,6 +216,9 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info
+        
+        
+        
     async def get_past_auction(self, id:str):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
@@ -218,6 +231,9 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info
+        
+        
+        
     async def get_bazzar_data(self):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
@@ -230,6 +246,9 @@ class FarmingCouncil(commands.Bot):
             except:
                 raise HypixelIsDown()
             return info
+        
+        
+        
     async def hoeTierPrice(self, tier, cropType, bazaar):
         typeHoe = {
             "WHEAT": {
