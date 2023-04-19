@@ -72,7 +72,6 @@ class Verification(commands.Cog):
     async def link(self, interaction: discord.Interaction, ign: str, profile: str=None):
         assert isinstance(interaction.user, discord.Member)
         ign = ign or interaction.user.display_name
-        await interaction.response.defer(ephemeral=True)
         await self.bot.command_counter(interaction)
         try:
             uuid = await self.bot.get_uuid(ign)
@@ -152,8 +151,7 @@ class Verification(commands.Cog):
                     conn: aiomysql.Connection
                     async with conn.cursor() as cursor:
                         cursor: aiomysql.Cursor
-                        await cursor.execute("INSERT INTO verification (user_id, ign, profile) VALUES (%s, %s, %s)",
-                            (interaction.user.id, ign, profile))
+                        await cursor.execute("INSERT INTO verification (user_id, ign, profile) VALUES (%s, %s, %s)", (interaction.user.id, ign, profile))
                     await conn.commit()
             except pymysql.IntegrityError as e:
                 if e.args[0] == 1062:

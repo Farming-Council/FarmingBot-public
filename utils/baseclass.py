@@ -426,6 +426,6 @@ class FarmingCouncil(commands.Bot):
                 await cursor.execute("SELECT * FROM verification WHERE user_id = %s", (discord_id,))
                 ign = await cursor.fetchone()
         if ign:
-            return ign[0]
+            return ign[1]
         else:
             return None
