@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from utils import FarmingCouncil
 
 class MyView(discord.ui.View):
-    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools):
+    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount):
         self.bot: FarmingCouncil = bot
         self.ign = ign
         self.profile = profile
@@ -25,6 +25,9 @@ class MyView(discord.ui.View):
         self.farming_collections = farming_collections
         self.farming_minions = farming_minions
         self.farming_tools = farming_tools
+        self.farming_weight = farming_weight
+        self.highest_collection_name = highest_collection_name
+        self.highest_collection_amount = highest_collection_amount
         super().__init__()
 
     @discord.ui.button(label="Farming Stats", style=discord.ButtonStyle.green)
@@ -46,9 +49,27 @@ class MyView(discord.ui.View):
             embed.add_field(name="XP to Next Level",
                             value=f"{self.farming_xp_to_next_level}",
                             inline=True)
+        embed.add_field(name="Farming Weight",
+                        value=f"{self.farming_weight}",
+                        inline=True)
+        embed.add_field(name="Best Collection",
+                        value=f"{self.highest_collection_name}: {self.highest_collection_amount}",
+                        inline=True)
+
+        embed.set_footer(text="Made By Farming Council",
+                         icon_url="https://i.imgur.com/4YXjLqq.png")
+
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    @discord.ui.button(label="Collections", style=discord.ButtonStyle.green)
+    async def collections(self, interaction, button):
+        embed = discord.Embed(title=f"{self.ign}'s Farming Collections ({self.profile})",
+                              color=0x08f730)
+
         embed.add_field(name="Collections",
                         value=f"{self.farming_collections}",
                         inline=True)
+
         embed.add_field(name="Minions",
                         value=f"{self.farming_minions}",
                         inline=True)
@@ -126,6 +147,9 @@ class FarmingStats(commands.Cog):
         farming_tools = farming_stats["farming_tools"]
         farming_collections = farming_stats["farming_collections"]
         farming_minions = farming_stats["farming_minions"]
+        farming_weight = farming_stats["farming_weight"]
+        highest_collection_name = farming_stats["highest_collection_name"]
+        highest_collection_amount = f"{int(farming_stats['highest_collection_amount']):,}"
 
         embed = discord.Embed(title=f"{ign}'s Farming Stats ({profile})",
                               color=0x08f730)
@@ -144,16 +168,16 @@ class FarmingStats(commands.Cog):
             embed.add_field(name="XP to Next Level",
                             value=f"{farming_xp_to_next_level}",
                             inline=True)
-        embed.add_field(name="Collections",
-                        value=f"{farming_collections}",
+        embed.add_field(name="Farming Weight",
+                        value=f"{farming_weight}",
                         inline=True)
-        embed.add_field(name="Minions",
-                        value=f"{farming_minions}",
+        embed.add_field(name="Best Collection",
+                        value=f"{highest_collection_name}: {highest_collection_amount}",
                         inline=True)
         embed.set_footer(text="Made By Farming Council",
                  icon_url="https://i.imgur.com/4YXjLqq.png")
 
-        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools)
+        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount)
         await self.bot.command_counter(interaction)
         await interaction.edit_original_response(embed=embed, view=view)
 
@@ -202,73 +226,61 @@ async def get_farming_stats(self, ign, profile=""):
         farming_tools = await get_farming_tools(self, member)
 
         # Farming Collections
-        farming_collections = await get_farming_collections(self, member)
+        farming_collections, highest_collection_name, highest_collection_amount = await get_farming_collections(self, member)
 
         # Farming Minions
         farming_minions = await get_farming_minions(self, json)
 
-        return [1, {"farming_level": farming_level, "farming_total_xp": farming_total_xp, "farming_xp_to_next_level": farming_xp_to_next_level, "farming_tools": farming_tools, "farming_collections": farming_collections, "farming_minions": farming_minions}]
+        # Farming Weight
+        farming_weight = await get_farming_weight(self, member, json, profile)
+        farming_weight = farming_weight[1]
+        farming_weight = round(farming_weight["total"], 2)
+
+        return [1, {"farming_level": farming_level, "farming_total_xp": farming_total_xp, "farming_xp_to_next_level": farming_xp_to_next_level, "farming_tools": farming_tools, "farming_collections": farming_collections, "highest_collection_name": highest_collection_name, "highest_collection_amount": highest_collection_amount ,"farming_minions": farming_minions, "farming_weight": farming_weight}]
     else:
         return [0, "Error: No player found. Please try again later or contact the developer at Mini#9609."]
 
 async def get_farming_collections(self, member):
+    collections = member["collection"]
     collections_string = ""
-    try:
-        wheat_collection = member['collection']['WHEAT']
-    except:
-        wheat_collection = 0
-    try:
-        carrot_collection = member["collection"]["CARROT_ITEM"]
-    except:
-        carrot_collection = 0
-    try:
-        potato_collection = member["collection"]["POTATO_ITEM"]
-    except:
-        potato_collection = 0
-    try:
-        melon_collection = member["collection"]["MELON"]
-    except:
-        melon_collection = 0
-    try:
-        pumpkin_collection = member["collection"]["PUMPKIN"]
-    except:
-        pumpkin_collection = 0
-    try:
-        cocoa_collection = member["collection"]["INK_SACK:3"]
-    except:
-        cocoa_collection = 0
-    try:
-        sugar_cane_collection = member["collection"]["SUGAR_CANE"]
-    except:
-        sugar_cane_collection = 0
-    try:
-        cactus_collection = member["collection"]["CACTUS"]
-    except:
-        cactus_collection = 0
-    try:
-        mushroom_collection = member["collection"]["MUSHROOM_COLLECTION"]
-    except:
-        mushroom_collection = 0
-    try:
-        nether_wart_collection = member["collection"]["NETHER_STALK"]
-    except:
-        nether_wart_collection = 0
+    collections_dict = {
+        "WHEAT": ["Wheat", "<:Wheat:1042829818133217300>"],
+        "CARROT_ITEM": ["Carrot", "<:carrot:1042829823741001798>"],
+        "POTATO_ITEM": ["Potato", "<:potato:1042829840140750848>"],
+        "MELON": ["Melon", "<:Melon:1042829832939126854>"],
+        "PUMPKIN": ["Pumpkin", "<:Pumpkin:1042829845203255357>"],
+        "INK_SACK:3": ["Cocoa Beans", "<:CocoaBeans:1042829825141919827>"],
+        "SUGAR_CANE": ["Sugar Cane", "<:sugar_cane:1042829849456287854>"],
+        "CACTUS": ["Cactus", "<:Cactus:1042829821971025951>"],
+        "MUSHROOM_COLLECTION": ["Mushroom", "<:mushroom:1042829836894339072>"],
+        "NETHER_STALK": ["Nether Wart", "<:NetherWarts:1042829838655959050>"]
+    }
+    collections_amounts = {}
+    for collection_type, name_emoji in collections_dict.items():
+        try:
+            collections_amounts[collection_type] = collections[collection_type]
+        except:
+            collections_amounts[collection_type] = 0
+
+    # Get the crop with the highest collection amount, the amounts are a string right now though
+    highest_collection = max(collections_amounts, key=collections_amounts.get)
+    highest_collection_name = f"{collections_dict[highest_collection][1]} {collections_dict[highest_collection][0]}"
+    highest_collection_amount = collections_amounts[highest_collection]
 
     collections_string += f"""
-    <:Wheat:1042829818133217300> Wheat: {int(wheat_collection):,}
-    <:carrot:1042829823741001798> Carrot: {int(carrot_collection):,}
-    <:potato:1042829840140750848> Potato: {int(potato_collection):,}
-    <:Melon:1042829832939126854> Melon: {int(melon_collection):,}
-    <:Pumpkin:1042829845203255357> Pumpkin: {int(pumpkin_collection):,}
-    <:CocoaBeans:1042829825141919827> Cocoa: {int(cocoa_collection):,}
-    <:sugar_cane:1042829849456287854> Sugar Cane: {int(sugar_cane_collection):,}
-    <:Cactus:1042829821971025951> Cactus: {int(cactus_collection):,}
-    <:mushroom:1042829836894339072> Mushroom: {int(mushroom_collection):,}
-    <:NetherWarts:1042829838655959050> Nether Wart: {int(nether_wart_collection):,}
+    {collections_dict["WHEAT"][1]} Wheat: {int(collections_amounts["WHEAT"]):,}
+    {collections_dict["CARROT_ITEM"][1]} Carrot: {int(collections_amounts["CARROT_ITEM"]):,}
+    {collections_dict["POTATO_ITEM"][1]} Potato: {int(collections_amounts["POTATO_ITEM"]):,}
+    {collections_dict["MELON"][1]} Melon: {int(collections_amounts["MELON"]):,}
+    {collections_dict["PUMPKIN"][1]} Pumpkin: {int(collections_amounts["PUMPKIN"]):,}
+    {collections_dict["INK_SACK:3"][1]} Cocoa: {int(collections_amounts["INK_SACK:3"]):,}
+    {collections_dict["SUGAR_CANE"][1]} Sugar Cane: {int(collections_amounts["SUGAR_CANE"]):,}
+    {collections_dict["CACTUS"][1]} Cactus: {int(collections_amounts["CACTUS"]):,}
+    {collections_dict["MUSHROOM_COLLECTION"][1]} Mushroom: {int(collections_amounts["MUSHROOM_COLLECTION"]):,}
+    {collections_dict["NETHER_STALK"][1]} Nether Wart: {int(collections_amounts["NETHER_STALK"]):,}
     """
 
-
-    return collections_string
+    return collections_string, highest_collection_name, highest_collection_amount
 
 
 async def get_farming_tools(self, member):
@@ -305,7 +317,6 @@ async def get_farming_tools(self, member):
     for item in inventory:
         if "attributes" in item:
             if item["attributes"]["id"] in FARMING_ITEMS:
-                # Append the tool emoji and the name of the tool
                 tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
     for item in ender_chest:
         if "attributes" in item:
@@ -327,64 +338,108 @@ async def get_farming_tools(self, member):
 
 async def get_farming_minions(self, json):
     unlocked_minions = json["unlocked_minions"]
-    if(unlocked_minions == None):
+    if unlocked_minions == None:
         return "Error obtaining farming minions\n"
+    
     minions_string = ""
-    try:
-        wheat_minion = unlocked_minions["WHEAT"]
-    except:
-        wheat_minion = 0
-    try:
-        carrot_minion = unlocked_minions["CARROT"]
-    except:
-        carrot_minion = 0
-    try:
-        potato_minion = unlocked_minions["POTATO"]
-    except:
-        potato_minion = 0
-    try:
-        melon_minion = unlocked_minions["MELON"]
-    except:
-        melon_minion = 0
-    try:
-        pumpkin_minion = unlocked_minions["PUMPKIN"]
-    except:
-        pumpkin_minion = 0
-    try:
-        cocoa_minion = unlocked_minions["COCOA"]
-    except:
-        cocoa_minion = 0
-    try:
-        sugar_cane_minion = unlocked_minions["SUGAR_CANE"]
-    except:
-        sugar_cane_minion = 0
-    try:
-        cactus_minion = unlocked_minions["CACTUS"]
-    except:
-        cactus_minion = 0
-    try:
-        mushroom_minion = unlocked_minions["MUSHROOM"]
-    except:
-        mushroom_minion = 0
-    try:
-        nether_wart_minion = unlocked_minions["NETHER_WARTS"]
-    except:
-        nether_wart_minion = 0
+    minion_types = ["WHEAT", "CARROT", "POTATO", "MELON", "PUMPKIN", "COCOA", "SUGAR_CANE", "CACTUS", "MUSHROOM", "NETHER_WARTS"]
+    minion_levels = {}
+    for minion_type in minion_types:
+        try:
+            minion_levels[minion_type] = unlocked_minions[minion_type]
+        except:
+            minion_levels[minion_type] = 0
 
     minions_string += f"""
-    Wheat: {wheat_minion}
-    Carrot: {carrot_minion}
-    Potato: {potato_minion}
-    Melon: {melon_minion}
-    Pumpkin: {pumpkin_minion}
-    Cocoa: {cocoa_minion}
-    Sugar Cane: {sugar_cane_minion}
-    Cactus: {cactus_minion}
-    Mushroom: {mushroom_minion}
-    Nether Wart: {nether_wart_minion}
+    <:Wheat:1042829818133217300> Wheat: {minion_levels["WHEAT"]}
+    <:carrot:1042829823741001798> Carrot: {minion_levels["CARROT"]}
+    <:potato:1042829840140750848> Potato: {minion_levels["POTATO"]}
+    <:Melon:1042829832939126854> Melon: {minion_levels["MELON"]}
+    <:Pumpkin:1042829845203255357> Pumpkin: {minion_levels["PUMPKIN"]}
+    <:CocoaBeans:1042829825141919827> Cocoa: {minion_levels["COCOA"]}
+    <:sugar_cane:1042829849456287854> Sugar Cane: {minion_levels["SUGAR_CANE"]}
+    <:Cactus:1042829821971025951> Cactus: {minion_levels["CACTUS"]}
+    <:mushroom:1042829836894339072> Mushroom: {minion_levels["MUSHROOM"]}
+    <:NetherWarts:1042829838655959050> Nether Wart: {minion_levels["NETHER_WARTS"]}
     """
 
     return minions_string
+
+async def get_farming_weight(self, member, json, profile):
+    weight = 0
+    if member:   
+        try:
+            farming_level = int(member["skills"]["farming"]["level"])
+        except:
+            farming_level = 0
+        cactus = int(member["collection"]["CACTUS"])/177254
+        carrot = int(member["collection"]["CARROT_ITEM"])/300000
+        cocoa = int(member["collection"]["INK_SACK:3"])/267174
+        melon = int(member["collection"]["MELON"])/450325
+        mushroom = int(member["collection"]["MUSHROOM_COLLECTION"])
+        wart = int(member["collection"]["NETHER_STALK"])/250000
+        potato = int(member["collection"]["POTATO_ITEM"])/300000
+        pumpkin = int(member["collection"]["PUMPKIN"])/90066
+        sugar = int(member["collection"]["SUGAR_CANE"])/200000
+        wheat = int(member["collection"]["WHEAT"])/100000
+        total= cactus + carrot + cocoa + melon + wart + potato + pumpkin + sugar + wheat
+
+        doubleBreakRatio = (cactus/180356 + sugar/200000) / total
+        normalRatio = (total - cactus/90178 - sugar/200000) / total
+        mushroomWeight = doubleBreakRatio * (mushroom / (2 * 180356)) + normalRatio * (mushroom / 90178)
+        weight +=mushroomWeight
+        weight += total
+
+        farming_weight = 0
+
+        if farming_level >= 60:
+            weight += 250
+            farming_weight += 250
+        elif farming_level >= 50:
+            weight += 100
+            farming_weight += 100
+        
+        minion_weight = 0
+        minions= []
+        for i in json["unlocked_minions"]:
+            if i in ["CACTUS","CARROT","COCOA","MELON","MUSHROOM","NETHER_WARTS","POTATO","PUMPKIN","SUGAR_CANE","WHEAT"]:
+                if json["unlocked_minions"][i] == 12:
+                    weight+=5
+                    minion_weight+=5
+                    minions.append(i)
+        jacub_weight = 0
+        jacub_perks = 0
+        try:
+            weight += member["jacob2"]["perks"]["double_drops"]*2
+            jacub_weight+=member["jacob2"]["perks"]["double_drops"]*2
+            jacub_perks+=member["jacob2"]["perks"]["double_drops"]
+
+        except:
+            pass
+
+        gold = 0
+        gold_weight = 0
+        for i in member["jacob2"]["contests"]:
+            try:
+                if member["jacob2"]["contests"][i]["claimed_medal"] == "gold":
+                    gold+=1
+            except:
+                try:
+                    if member["jacob2"]["contests"][i]["claimed_position"]<=member["jacob2"]["contests"][i]["claimed_participants"] * 0.05 + 1:
+                        gold+=1
+                except:
+                    pass
+                pass
+        if gold >=1000:
+            weight += 500
+            gold_weight += 500
+        else:
+            gold = 50 * round(gold / 50)
+            gold_weight += gold / 50 *25
+        
+        return [1,{"profile":profile,"total":weight,"collection_total":{"total":total+mushroomWeight,"cactus":cactus,"carrot":carrot,"cocoa":cocoa,"melon":melon,"wart":wart,"potato":potato,"pumpkin":pumpkin,"sugar":sugar,"wheat":wheat,"mushroom":mushroomWeight},"farming_weight":{"farming_weight":farming_weight,"farming_level":farming_level},"minions":{"minion_weight":minion_weight,"minions":minions},"jacub":{"jacub_weight":jacub_weight,"jacub_perks":jacub_perks},"gold":{"golds":gold,"gold_weight":gold_weight}}]
+    else:
+        return [0,"Error: No player found. Please try again later or contact the developer at CosmicCrow#6355."]
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(FarmingStats(bot))
