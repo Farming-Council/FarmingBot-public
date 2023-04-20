@@ -87,6 +87,9 @@ class FarmingStats(commands.Cog):
         embed.add_field(name="Collections",
                         value=f"{farming_collections}",
                         inline=True)
+        embed.add_field(name="Minions",
+                        value=f"{farming_minions}",
+                        inline=True)
         embed.add_field(name="Farming Tools",
                         value=f"{farming_tools}",
                         inline=True)
