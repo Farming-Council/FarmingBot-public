@@ -6,11 +6,71 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord import Button, ButtonStyle
+import aiohttp
 import datetime
 import time
 from utils import FARMING_ITEMS
 if TYPE_CHECKING:
     from utils import FarmingCouncil
+
+class MyView(discord.ui.View):
+    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools):
+        self.bot: FarmingCouncil = bot
+        self.ign = ign
+        self.profile = profile
+        self.farming_level = farming_level
+        self.farming_total_xp = farming_total_xp
+        self.farming_xp_to_next_level = farming_xp_to_next_level
+        self.farming_collections = farming_collections
+        self.farming_minions = farming_minions
+        self.farming_tools = farming_tools
+        super().__init__()
+
+    @discord.ui.button(label="Farming Stats", style=discord.ButtonStyle.green)
+    async def farming_stats(self, interaction, button):
+        embed = discord.Embed(title=f"{self.ign}'s Farming Stats ({self.profile})",
+                              color=0x08f730)
+
+        embed.add_field(name="Farming Level",
+                        value=f"{self.farming_level}",
+                        inline=True)
+        embed.add_field(name="Total Farming XP",
+                        value=f"{self.farming_total_xp}",
+                        inline=True)
+        if(self.farming_xp_to_next_level == "MAX"):
+            embed.add_field(name="XP to Next Level",
+                            value=f"{self.farming_xp_to_next_level}",
+                            inline=True)
+        else:
+            embed.add_field(name="XP to Next Level",
+                            value=f"{self.farming_xp_to_next_level}",
+                            inline=True)
+        embed.add_field(name="Collections",
+                        value=f"{self.farming_collections}",
+                        inline=True)
+        embed.add_field(name="Minions",
+                        value=f"{self.farming_minions}",
+                        inline=True)
+
+        embed.set_footer(text="Made By Farming Council",
+                         icon_url="https://i.imgur.com/4YXjLqq.png")
+
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    @discord.ui.button(label="Tools and Armor", style=discord.ButtonStyle.green)
+    async def tools_and_armor(self, interaction, button):
+        embed = discord.Embed(title=f"{self.ign}'s Farming Tools and Armor ({self.profile})",
+                              color=0x08f730)
+
+        embed.add_field(name="Farming Tools",
+                        value=f"{self.farming_tools}",
+                        inline=True)
+
+        embed.set_footer(text="Made By Farming Council",
+                         icon_url="https://i.imgur.com/4YXjLqq.png")
+
+        await interaction.response.edit_message(embed=embed, view=self)
 
 class FarmingStats(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
@@ -90,14 +150,12 @@ class FarmingStats(commands.Cog):
         embed.add_field(name="Minions",
                         value=f"{farming_minions}",
                         inline=True)
-        embed.add_field(name="Farming Tools",
-                        value=f"{farming_tools}",
-                        inline=True)
-
         embed.set_footer(text="Made By Farming Council",
                  icon_url="https://i.imgur.com/4YXjLqq.png")
 
-        await interaction.edit_original_response(embed=embed)
+        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools)
+        await self.bot.command_counter(interaction)
+        await interaction.edit_original_response(embed=embed, view=view)
 
 async def get_farming_stats(self, ign, profile=""):
     async with self.session.get(f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{ign}/{profile}") as req:
@@ -197,16 +255,16 @@ async def get_farming_collections(self, member):
         nether_wart_collection = 0
 
     collections_string += f"""
-    Wheat: {int(wheat_collection):,}
-    Carrot: {int(carrot_collection):,}
-    Potato: {int(potato_collection):,}
-    Melon: {int(melon_collection):,}
-    Pumpkin: {int(pumpkin_collection):,}
-    Cocoa: {int(cocoa_collection):,}
-    Sugar Cane: {int(sugar_cane_collection):,}
-    Cactus: {int(cactus_collection):,}
-    Mushroom: {int(mushroom_collection):,}
-    Nether Wart: {int(nether_wart_collection):,}
+    <:Wheat:1042829818133217300> Wheat: {int(wheat_collection):,}
+    <:carrot:1042829823741001798> Carrot: {int(carrot_collection):,}
+    <:potato:1042829840140750848> Potato: {int(potato_collection):,}
+    <:Melon:1042829832939126854> Melon: {int(melon_collection):,}
+    <:Pumpkin:1042829845203255357> Pumpkin: {int(pumpkin_collection):,}
+    <:CocoaBeans:1042829825141919827> Cocoa: {int(cocoa_collection):,}
+    <:sugar_cane:1042829849456287854> Sugar Cane: {int(sugar_cane_collection):,}
+    <:Cactus:1042829821971025951> Cactus: {int(cactus_collection):,}
+    <:mushroom:1042829836894339072> Mushroom: {int(mushroom_collection):,}
+    <:NetherWarts:1042829838655959050> Nether Wart: {int(nether_wart_collection):,}
     """
 
 
@@ -214,6 +272,32 @@ async def get_farming_collections(self, member):
 
 
 async def get_farming_tools(self, member):
+    TOOL_EMOJIS = {
+        "COCO_CHOPPER": "<:enGoldHoe:1098448729150853120>", 
+        "MELON_DICER": "<:enDiamondAxe:1098448295820533811>",
+        "MELON_DICER_2": "<:enDiamondAxe:1098448295820533811>",
+        "MELON_DICER_3": "<:enDiamondAxe:1098448295820533811>",
+        "PUMPKIN_DICER": "<:enGoldenAxe:1098447886301266013>",
+        "PUMPKIN_DICER_2": "<:enGoldenAxe:1098447886301266013>",
+        "PUMPKIN_DICER_3": "<:enGoldenAxe:1098447886301266013>",
+        "CACTUS_KNIFE": "<:enGoldHoe:1098448729150853120>",
+        "FUNGI_CUTTER": "<:enGoldHoe:1098448729150853120>",
+        "THEORETICAL_HOE_WHEAT_1": "<:enStoneHoe:1098449459244978197>",
+        "THEORETICAL_HOE_WHEAT_2": "<:enIronHoe:1098448660414599189>",
+        "THEORETICAL_HOE_WHEAT_3": "<:enDiamondHoe:1098449376512311366>",
+        "THEORETICAL_HOE_POTATO_1": "<:enStoneHoe:1098449459244978197>",
+        "THEORETICAL_HOE_POTATO_2": "<:enIronHoe:1098448660414599189>",
+        "THEORETICAL_HOE_POTATO_3": "<:enDiamondHoe:1098449376512311366>",
+        "THEORETICAL_HOE_CARROT_1": "<:enStoneHoe:1098449459244978197>",
+        "THEORETICAL_HOE_CARROT_2": "<:enIronHoe:1098448660414599189>",
+        "THEORETICAL_HOE_CARROT_3": "<:enDiamondHoe:1098449376512311366>",
+        "THEORETICAL_HOE_WARTS_1": "<:enStoneHoe:1098449459244978197>",
+        "THEORETICAL_HOE_WARTS_2": "<:enIronHoe:1098448660414599189>",
+        "THEORETICAL_HOE_WARTS_3": "<:enDiamondHoe:1098449376512311366>",
+        "THEORETICAL_HOE_CANE_1": "<:enStoneHoe:1098449459244978197>",
+        "THEORETICAL_HOE_CANE_2": "<:enIronHoe:1098448660414599189>",
+        "THEORETICAL_HOE_CANE_3": "<:enDiamondHoe:1098449376512311366>"
+    }
     tools = []
     inventory = member["inventory"]
     ender_chest = member["ender_chest"]
@@ -221,16 +305,17 @@ async def get_farming_tools(self, member):
     for item in inventory:
         if "attributes" in item:
             if item["attributes"]["id"] in FARMING_ITEMS:
-                tools.append(item["name"][2:])
+                # Append the tool emoji and the name of the tool
+                tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
     for item in ender_chest:
         if "attributes" in item:
             if item["attributes"]["id"] in FARMING_ITEMS:
-                tools.append(item["name"][2:])
+                tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
     for backpack in backpacks:
         for item in backpack:
             if "attributes" in item:
                 if item["attributes"]["id"] in FARMING_ITEMS:
-                    tools.append(item["name"][2:])
+                    tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
 
     if len(tools) == 0:
         return "No Farming Tools\n"
