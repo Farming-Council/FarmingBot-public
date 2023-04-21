@@ -373,7 +373,6 @@ async def get_farming_collections(self, member):
         except:
             collections_amounts[collection_type] = 0
 
-    # Get the crop with the highest collection amount, the amounts are a string right now though
     highest_collection = max(collections_amounts, key=collections_amounts.get)
     highest_collection_name = f"{COLLECTIONS_DICT[highest_collection][1]} {COLLECTIONS_DICT[highest_collection][0]}"
     highest_collection_amount = collections_amounts[highest_collection]
@@ -474,24 +473,6 @@ async def get_farming_contests(self, member):
             last_10_contests_string += f"{MEDAL_EMOJIS[medal]} {COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contest_data['collected']):,}\n"
         except:
             last_10_contests_string += f"{COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contest_data['collected']):,}\n"
-
-    # for contest in last_10_contests:
-    #     if "INK_SACK:3" in contest:
-    #         contest = "INK_SACK:3"
-    #     else:
-    #         contest = contest.split(":")[2]
-    #     try:
-    #         medal = contests[contest]["claimed_medal"]
-    #         last_10_contests_string += f"{MEDAL_EMOJIS[medal]} {COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contests[contest]['collected']):,}\n"
-
-    # for contest in last_10_contests:
-    #     contest_amount = contest["collected"]
-    #     contest_type = contest.split(":")[2]
-    #     try:
-    #         medal = contest["claimed_medal"]
-    #         last_10_contests_string += f"{MEDAL_EMOJIS[contest['medal']]} {COLLECTIONS_DICT[contest_type][1]} {COLLECTIONS_DICT[contest_type][0]} - {int(contest_amount):,}\n"
-    #     except:
-    #         last_10_contests_string += f"{COLLECTIONS_DICT[contest_type][1]} {COLLECTIONS_DICT[contest_type][0]} - {int(contest_amount):,} (UNCLAIMED)\n"
 
     try:
         unique_golds = jacob_contents["unique_golds2"]
