@@ -221,7 +221,10 @@ class Profile(commands.Cog):
             profile = skyblock_data["cute_name"]
             gamemode = skyblock_data["game_mode"]
         except:
-            embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please contact the developer at Mini#9609.""", color=EMBED_COLOR)
+            if profile == 0:
+                embed = discord.Embed(title=f"Error",description=f"""{ign} does not have a profile!""", color=EMBED_COLOR)
+            else:
+                embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please contact the developer at Mini#9609.""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
