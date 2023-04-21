@@ -21,16 +21,16 @@ MEDAL_EMOJIS = {
 }
 
 COLLECTIONS_DICT = {
-    "WHEAT": ["Wheat", "<:Wheat:1098455633554059404>"],
-    "CARROT_ITEM": ["Carrot", "<:carrot1:1098455722028695662>"],
-    "POTATO_ITEM": ["Potato", "<:potato1:1098455630081171497>"],
-    "MELON": ["Melon", "<:Melon:1098455629103910912>"],
-    "PUMPKIN": ["Pumpkin", "<:Pumpkin:1098455627690426478>"],
-    "INK_SACK:3": ["Cocoa Beans", "<:CocoaBeans:1098455625073176587>"],
-    "SUGAR_CANE": ["Sugar Cane", "<:sugar_cane:1098455626075607121>"],
-    "CACTUS": ["Cactus", "<:Cactus:1098455623890370681>"],
-    "MUSHROOM_COLLECTION": ["Mushroom", "<:mushroom1:1098455620845314108>"],
-    "NETHER_STALK": ["Nether Wart", "<:NetherWarts:1098455622929883166>"]
+    "WHEAT": ["Wheat", "<:Wheat:1042829818133217300>"],
+    "CARROT_ITEM": ["Carrot", "<:carrot:1042829823741001798>"],
+    "POTATO_ITEM": ["Potato", "<:potato:1042829840140750848>"],
+    "MELON": ["Melon", "<:Melon:1042829832939126854>"],
+    "PUMPKIN": ["Pumpkin", "<:Pumpkin:1042829845203255357>"],
+    "INK_SACK:3": ["Cocoa Beans", "<:CocoaBeans:1042829825141919827>"],
+    "SUGAR_CANE": ["Sugar Cane", "<:sugar_cane:1042829849456287854>"],
+    "CACTUS": ["Cactus", "<:Cactus:1042829821971025951>"],
+    "MUSHROOM_COLLECTION": ["Mushroom", "<:mushroom:1042829836894339072>"],
+    "NETHER_STALK": ["Nether Wart", "<:NetherWarts:1042829838655959050>"]
 }
 
 TOOL_EMOJIS = {
@@ -86,15 +86,13 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Farming Stats", style=discord.ButtonStyle.green)
     async def farming_stats(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Stats ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+        embed = discord.Embed(title=f"{self.ign}'s Stats ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
                               color=EMBED_COLOR)
 
         embed.add_field(name="Farming Level",
                         value=f"{self.farming_level}",
                         inline=True)
-        embed.add_field(name="Total Farming XP",
-                        value=f"{self.farming_total_xp}",
-                        inline=True)
+
         if(self.farming_xp_to_next_level == "MAX"):
             embed.add_field(name="XP to Next Level",
                             value=f"{self.farming_xp_to_next_level}",
@@ -103,9 +101,15 @@ class MyView(discord.ui.View):
             embed.add_field(name="XP to Next Level",
                             value=f"{self.farming_xp_to_next_level}",
                             inline=True)
+
+        embed.add_field(name="Total Farming XP",
+                        value=f"{self.farming_total_xp}",
+                        inline=True)
+
         embed.add_field(name="Farming Weight",
                         value=f"{self.farming_weight}",
                         inline=True)
+
         embed.add_field(name="Best Collection",
                         value=f"{self.highest_collection_name}: {self.highest_collection_amount}",
                         inline=True)
@@ -117,7 +121,7 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Collections", style=discord.ButtonStyle.green)
     async def collections(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Collections ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+        embed = discord.Embed(title=f"{self.ign}'s Collections ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
                               color=EMBED_COLOR)
 
         embed.add_field(name="Collections",
@@ -135,7 +139,7 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Tools", style=discord.ButtonStyle.green)
     async def tools(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Tools ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+        embed = discord.Embed(title=f"{self.ign}'s Tools ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
                               color=EMBED_COLOR)
 
         embed.add_field(name="Farming Tools",
@@ -149,7 +153,7 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Contests", style=discord.ButtonStyle.green)
     async def contests(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Contests ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+        embed = discord.Embed(title=f"{self.ign}'s Contests ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
                                 color=EMBED_COLOR)
 
         embed.add_field(name="Last 10 Contests",
@@ -257,17 +261,15 @@ class Profile(commands.Cog):
             is_ironman = True
         
         if is_ironman:
-            ironman_string += IRONMAN_EMOJI
+            ironman_string += f" {IRONMAN_EMOJI}"
 
-        embed = discord.Embed(title=f"{ign}'s Farming Stats ({profile} {ironman_string}) - Lvl {skyblock_level}",
+        embed = discord.Embed(title=f"{ign}'s Farming Stats ({profile}{ironman_string}) - Lvl {skyblock_level}",
                               color=EMBED_COLOR)
 
         embed.add_field(name="Farming Level",
                         value=f"{farming_level}",
                         inline=True)
-        embed.add_field(name="Total Farming XP",
-                        value=f"{farming_total_xp}",
-                        inline=True)
+        
         if(farming_xp_to_next_level == "MAX"):
             embed.add_field(name="XP to Next Level",
                             value=f"{farming_xp_to_next_level}",
@@ -276,12 +278,19 @@ class Profile(commands.Cog):
             embed.add_field(name="XP to Next Level",
                             value=f"{farming_xp_to_next_level}",
                             inline=True)
+
+        embed.add_field(name="Total Farming XP",
+                        value=f"{farming_total_xp}",
+                        inline=True)
+
         embed.add_field(name="Farming Weight",
                         value=f"{farming_weight}",
                         inline=True)
+
         embed.add_field(name="Best Collection",
                         value=f"{highest_collection_name}: {highest_collection_amount}",
                         inline=True)
+
         embed.set_footer(text="Made by Farming Council - Weight by Elite Bot",
                  icon_url="https://i.imgur.com/4YXjLqq.png")
 
@@ -427,16 +436,16 @@ async def get_farming_minions(self, json):
             minion_levels[minion_type] = 0
 
     minions_string += f"""
-    <:Wheat:1098455633554059404> Wheat: {minion_levels["WHEAT"]}
-    <:carrot1:1098455722028695662> Carrot: {minion_levels["CARROT"]}
-    <:potato1:1098455630081171497> Potato: {minion_levels["POTATO"]}
-    <:Melon:1098455629103910912> Melon: {minion_levels["MELON"]}
-    <:Pumpkin:1098455627690426478> Pumpkin: {minion_levels["PUMPKIN"]}
-    <:CocoaBeans:1098455625073176587> Cocoa: {minion_levels["COCOA"]}
-    <:sugar_cane:1098455626075607121> Sugar Cane: {minion_levels["SUGAR_CANE"]}
-    <:Cactus:1098455623890370681> Cactus: {minion_levels["CACTUS"]}
-    <:mushroom1:1098455620845314108> Mushroom: {minion_levels["MUSHROOM"]}
-    <:NetherWarts:1098455622929883166> Nether Wart: {minion_levels["NETHER_WARTS"]}
+    <:Wheat:1042829818133217300> Wheat: {minion_levels["WHEAT"]}
+    <:carrot:1042829823741001798> Carrot: {minion_levels["CARROT"]}
+    <:potato:1042829840140750848> Potato: {minion_levels["POTATO"]}
+    <:Melon:1042829832939126854> Melon: {minion_levels["MELON"]}
+    <:Pumpkin:1042829845203255357> Pumpkin: {minion_levels["PUMPKIN"]}
+    <:CocoaBeans:1042829825141919827> Cocoa: {minion_levels["COCOA"]}
+    <:sugar_cane:1042829849456287854> Sugar Cane: {minion_levels["SUGAR_CANE"]}
+    <:Cactus:1042829821971025951> Cactus: {minion_levels["CACTUS"]}
+    <:mushroom:1042829836894339072> Mushroom: {minion_levels["MUSHROOM"]}
+    <:NetherWarts:1042829838655959050> Nether Wart: {minion_levels["NETHER_WARTS"]}
     """
 
     return minions_string
