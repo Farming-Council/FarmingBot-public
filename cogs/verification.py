@@ -11,6 +11,7 @@ from discord.ext import commands
 from errors import PlayerNotFoundError, InvalidMinecraftUsername, ProfileNotFoundError, HypixelIsDown
 import pymysql
 from discord.utils import get
+from utils import EMBED_COLOR
 
 import sys, os
 if TYPE_CHECKING:
@@ -60,7 +61,7 @@ class Verification(commands.Cog):
             except:
                 embed = discord.Embed(title="\U0000274c Failed", description="There was an issue while unverifying, please contact a staff member.", color=discord.Colour.red())
                 return await interaction.followup.send(embed=embed, ephemeral=True)
-        embed = discord.Embed(title="Success", description="You have successfully unlinked your account. To re-link run </link:1082814958871527566>.", color=0x2F3136)
+        embed = discord.Embed(title="Success", description="You have successfully unlinked your account. To re-link run </link:1082814958871527566>.", color=EMBED_COLOR)
         
         await interaction.followup.send(embed=embed, ephemeral=True)
 

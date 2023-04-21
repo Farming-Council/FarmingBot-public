@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Literal
 import discord
 from discord import app_commands
 from discord.ext import commands
+from utils import EMBED_COLOR
 
 if TYPE_CHECKING:
     from utils import FarmingCouncil
@@ -21,7 +22,7 @@ class CropView(discord.ui.View):
 
     @discord.ui.button(label='Written', style=discord.ButtonStyle.danger)
     async def written(self, interaction: discord.Interaction, button: discord.ui.Button):
-        e = discord.Embed(title=f"{self.crop} Guide", description=f"To look at the written guide on `{self.crop}`, join our support server by clicking [**here**](https://discord.gg/farmers). Then head to the **Guides and Tutorials Category** where you will find the {self.crop} guide channel.", color=0x2F3136)
+        e = discord.Embed(title=f"{self.crop} Guide", description=f"To look at the written guide on `{self.crop}`, join our support server by clicking [**here**](https://discord.gg/farmers). Then head to the **Guides and Tutorials Category** where you will find the {self.crop} guide channel.", color=EMBED_COLOR)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)
 
@@ -30,11 +31,11 @@ class CropView(discord.ui.View):
         link = await interaction.client.get_crop(self.crop.lower())
         if link:
             link = link[1]
-            e = discord.Embed(title=f"{self.crop} Guide", description=f"Here is a video of `{self.crop}` guide\nYou can also join our discord server for more information!", color=0x2F3136)
+            e = discord.Embed(title=f"{self.crop} Guide", description=f"Here is a video of `{self.crop}` guide\nYou can also join our discord server for more information!", color=EMBED_COLOR)
             e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
             await interaction.response.send_message(embed=e, view=Links(link))
         else:
-            e = discord.Embed(title=f"{self.crop} Guide", description=f"Sorry, but we don't have a video guide for `{self.crop}` yet. Please let us know if you would like to make one! Btw: If you are seeing this, then something very bad happend...", color=0x2F3136)
+            e = discord.Embed(title=f"{self.crop} Guide", description=f"Sorry, but we don't have a video guide for `{self.crop}` yet. Please let us know if you would like to make one! Btw: If you are seeing this, then something very bad happend...", color=EMBED_COLOR)
             e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
             await interaction.response.send_message(embed=e)
 
@@ -46,7 +47,7 @@ class Tutorial(commands.Cog):
     @app_commands.command(description="Tell a user how to use our shop")
     @app_commands.guild_only()
     async def tutorial(self, interaction: discord.Interaction, topic: Literal["Carrots", "Potato", "Wheat", "Sugar Cane", "Pumpkin", "Melon", "Teleport Pads"]):
-        e = discord.Embed(title=f"{topic} Guide", description=f"Please let us know if you want the guide to be **written** or **video** form!", color=0x2F3136)
+        e = discord.Embed(title=f"{topic} Guide", description=f"Please let us know if you want the guide to be **written** or **video** form!", color=EMBED_COLOR)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e, view=CropView(topic))
         await self.bot.command_counter(interaction)

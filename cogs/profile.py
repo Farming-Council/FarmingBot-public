@@ -10,58 +10,60 @@ from discord import Button, ButtonStyle
 import aiohttp
 import datetime
 import time
-from utils import FARMING_ITEMS
+from utils import FARMING_ITEMS, EMBED_COLOR
 if TYPE_CHECKING:
     from utils import FarmingCouncil
 
 MEDAL_EMOJIS = {
-    "gold": "<:gold_medal:1098449376512311366>",
-    "silver": "<:silver_medal:1098448660414599189>",
-    "bronze": "<:bronze_medal:1098449459244978197>"
+    "gold": "<:Top1:1085659408824029355>",
+    "silver": "<:Top3:1085659431380996186>",
+    "bronze": "<:Top10:1085659447562621049>"
 }
 
 COLLECTIONS_DICT = {
-    "WHEAT": ["Wheat", "<:Wheat:1042829818133217300>"],
-    "CARROT_ITEM": ["Carrot", "<:carrot:1042829823741001798>"],
-    "POTATO_ITEM": ["Potato", "<:potato:1042829840140750848>"],
-    "MELON": ["Melon", "<:Melon:1042829832939126854>"],
-    "PUMPKIN": ["Pumpkin", "<:Pumpkin:1042829845203255357>"],
-    "INK_SACK:3": ["Cocoa Beans", "<:CocoaBeans:1042829825141919827>"],
-    "SUGAR_CANE": ["Sugar Cane", "<:sugar_cane:1042829849456287854>"],
-    "CACTUS": ["Cactus", "<:Cactus:1042829821971025951>"],
-    "MUSHROOM_COLLECTION": ["Mushroom", "<:mushroom:1042829836894339072>"],
-    "NETHER_STALK": ["Nether Wart", "<:NetherWarts:1042829838655959050>"]
+    "WHEAT": ["Wheat", "<:Wheat:1098455633554059404>"],
+    "CARROT_ITEM": ["Carrot", "<:carrot1:1098455722028695662>"],
+    "POTATO_ITEM": ["Potato", "<:potato1:1098455630081171497>"],
+    "MELON": ["Melon", "<:Melon:1098455629103910912>"],
+    "PUMPKIN": ["Pumpkin", "<:Pumpkin:1098455627690426478>"],
+    "INK_SACK:3": ["Cocoa Beans", "<:CocoaBeans:1098455625073176587>"],
+    "SUGAR_CANE": ["Sugar Cane", "<:sugar_cane:1098455626075607121>"],
+    "CACTUS": ["Cactus", "<:Cactus:1098455623890370681>"],
+    "MUSHROOM_COLLECTION": ["Mushroom", "<:mushroom1:1098455620845314108>"],
+    "NETHER_STALK": ["Nether Wart", "<:NetherWarts:1098455622929883166>"]
 }
 
 TOOL_EMOJIS = {
-    "COCO_CHOPPER": "<:enGoldHoe:1098448729150853120>", 
-    "MELON_DICER": "<:enDiamondAxe:1098448295820533811>",
-    "MELON_DICER_2": "<:enDiamondAxe:1098448295820533811>",
-    "MELON_DICER_3": "<:enDiamondAxe:1098448295820533811>",
-    "PUMPKIN_DICER": "<:enGoldenAxe:1098447886301266013>",
-    "PUMPKIN_DICER_2": "<:enGoldenAxe:1098447886301266013>",
-    "PUMPKIN_DICER_3": "<:enGoldenAxe:1098447886301266013>",
-    "CACTUS_KNIFE": "<:enGoldHoe:1098448729150853120>",
-    "FUNGI_CUTTER": "<:enGoldHoe:1098448729150853120>",
-    "THEORETICAL_HOE_WHEAT_1": "<:enStoneHoe:1098449459244978197>",
-    "THEORETICAL_HOE_WHEAT_2": "<:enIronHoe:1098448660414599189>",
-    "THEORETICAL_HOE_WHEAT_3": "<:enDiamondHoe:1098449376512311366>",
-    "THEORETICAL_HOE_POTATO_1": "<:enStoneHoe:1098449459244978197>",
-    "THEORETICAL_HOE_POTATO_2": "<:enIronHoe:1098448660414599189>",
-    "THEORETICAL_HOE_POTATO_3": "<:enDiamondHoe:1098449376512311366>",
-    "THEORETICAL_HOE_CARROT_1": "<:enStoneHoe:1098449459244978197>",
-    "THEORETICAL_HOE_CARROT_2": "<:enIronHoe:1098448660414599189>",
-    "THEORETICAL_HOE_CARROT_3": "<:enDiamondHoe:1098449376512311366>",
-    "THEORETICAL_HOE_WARTS_1": "<:enStoneHoe:1098449459244978197>",
-    "THEORETICAL_HOE_WARTS_2": "<:enIronHoe:1098448660414599189>",
-    "THEORETICAL_HOE_WARTS_3": "<:enDiamondHoe:1098449376512311366>",
-    "THEORETICAL_HOE_CANE_1": "<:enStoneHoe:1098449459244978197>",
-    "THEORETICAL_HOE_CANE_2": "<:enIronHoe:1098448660414599189>",
-    "THEORETICAL_HOE_CANE_3": "<:enDiamondHoe:1098449376512311366>"
+    "COCO_CHOPPER": "<:coco_chopper:1099036047763066880>", 
+    "MELON_DICER": "<:melon_dicer:1099036046366359576>",
+    "MELON_DICER_2": "<:melon_dicer:1099036046366359576>",
+    "MELON_DICER_3": "<:melon_dicer:1099036046366359576>",
+    "PUMPKIN_DICER": "<:pumpkin_dicer:1099036044868997140>",
+    "PUMPKIN_DICER_2": "<:pumpkin_dicer:1099036044868997140>",
+    "PUMPKIN_DICER_3": "<:pumpkin_dicer:1099036044868997140>",
+    "CACTUS_KNIFE": "<:cactus_knife:1099038077911056414>",
+    "FUNGI_CUTTER": "<:fungi_cutter:1099037924894441552>",
+    "THEORETICAL_HOE_WHEAT_1": "<:euclids_wheat_hoe_t1:1099036301426180106>",
+    "THEORETICAL_HOE_WHEAT_2": "<:euclids_wheat_hoe_t2:1099036302709633168>",
+    "THEORETICAL_HOE_WHEAT_3": "<:euclids_wheat_hoe_t3:1099036062669623386>",
+    "THEORETICAL_HOE_POTATO_1": "<:pythagorean_potato_hoe_t1:1099036051491786852>",
+    "THEORETICAL_HOE_POTATO_2": "<:pythagorean_potato_hoe_t2:1099036049910542367>",
+    "THEORETICAL_HOE_POTATO_3": "<:pythagorean_potato_hoe_t3:1099036048723542076>",
+    "THEORETICAL_HOE_CARROT_1": "<:gauss_carrot_hoe_t1:1099036303745622177>",
+    "THEORETICAL_HOE_CARROT_2": "<:gauss_carrot_hoe_t2:1099036053920288810>",
+    "THEORETICAL_HOE_CARROT_3": "<:gauss_carrot_hoe_t3:1099036052360024175>",
+    "THEORETICAL_HOE_WARTS_1": "<:newton_nether_warts_hoe_t1:1099036059200934029>",
+    "THEORETICAL_HOE_WARTS_2": "<:newton_nether_warts_hoe_t2:1099036057611280425>",
+    "THEORETICAL_HOE_WARTS_3": "<:newton_nether_warts_hoe_t3:1099036305578528929>",
+    "THEORETICAL_HOE_CANE_1": "<:turing_sugar_cane_hoe_t1:1099036300360826920>",
+    "THEORETICAL_HOE_CANE_2": "<:turing_sugar_cane_hoe_t2:1099036298616000552>",
+    "THEORETICAL_HOE_CANE_3": "<:turing_sugar_cane_hoe_t3:1099036306929111141>"
 }
 
+IRONMAN_EMOJI = "<:ironman:1099050581454246000>"
+
 class MyView(discord.ui.View):
-    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, best_contest, medal_inventory, unique_golds):
+    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, ironman):
         self.bot: FarmingCouncil = bot
         self.ign = ign
         self.profile = profile
@@ -75,15 +77,17 @@ class MyView(discord.ui.View):
         self.highest_collection_name = highest_collection_name
         self.highest_collection_amount = highest_collection_amount
         self.skyblock_level = skyblock_level
+        self.last_10_contests = last_10_contests
         self.best_contest = best_contest
         self.medal_inventory = medal_inventory
         self.unique_golds = unique_golds
+        self.ironman = ironman
         super().__init__()
 
     @discord.ui.button(label="Farming Stats", style=discord.ButtonStyle.green)
     async def farming_stats(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Stats ({self.profile}) - Lvl {self.skyblock_level}",
-                              color=0x08f730)
+        embed = discord.Embed(title=f"{self.ign}'s Stats ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+                              color=EMBED_COLOR)
 
         embed.add_field(name="Farming Level",
                         value=f"{self.farming_level}",
@@ -113,8 +117,8 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Collections", style=discord.ButtonStyle.green)
     async def collections(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Collections ({self.profile}) - Lvl {self.skyblock_level}",
-                              color=0x08f730)
+        embed = discord.Embed(title=f"{self.ign}'s Collections ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+                              color=EMBED_COLOR)
 
         embed.add_field(name="Collections",
                         value=f"{self.farming_collections}",
@@ -131,8 +135,8 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Tools", style=discord.ButtonStyle.green)
     async def tools(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Tools ({self.profile}) - Lvl {self.skyblock_level}",
-                              color=0x08f730)
+        embed = discord.Embed(title=f"{self.ign}'s Tools ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+                              color=EMBED_COLOR)
 
         embed.add_field(name="Farming Tools",
                         value=f"{self.farming_tools}",
@@ -145,19 +149,23 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Contests", style=discord.ButtonStyle.green)
     async def contests(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Contests ({self.profile}) - Lvl {self.skyblock_level}",
-                                color=0x08f730)
-        
-        embed.add_field(name="Best Contest",
-                        value=f"{self.best_contest}",
+        embed = discord.Embed(title=f"{self.ign}'s Contests ({self.profile} {self.ironman}) - Lvl {self.skyblock_level}",
+                                color=EMBED_COLOR)
+
+        embed.add_field(name="Last 10 Contests",
+                        value=f"{self.last_10_contests}",
+                        inline=True)
+
+        embed.add_field(name="Unique Golds",
+                        value=f"{self.unique_golds}",
                         inline=True)
 
         embed.add_field(name="Medal Inventory",
                         value=f"{self.medal_inventory}",
                         inline=True)
-
-        embed.add_field(name="Unique Golds",
-                        value=f"{self.unique_golds}",
+        
+        embed.add_field(name="Best Contest",
+                        value=f"{self.best_contest}",
                         inline=True)
 
         embed.set_footer(text="Made by Farming Council",
@@ -180,7 +188,7 @@ class Profile(commands.Cog):
             ign = interaction.user.display_name
 
 
-        embed = discord.Embed(title=f"Loading",description=f"""Checking {ign}'s Farming Stats!""", color=0x08f730)
+        embed = discord.Embed(title=f"Loading",description=f"""Checking {ign}'s Farming Stats!""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made By Farming Council", 
                     icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -189,7 +197,7 @@ class Profile(commands.Cog):
         try:
             uuid = await self.bot.get_uuid(ign)
         except:
-            embed = discord.Embed(title=f"Error",description=f"""{ign} does not exist!""", color=0x08f730)
+            embed = discord.Embed(title=f"Error",description=f"""{ign} does not exist!""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -205,8 +213,9 @@ class Profile(commands.Cog):
 
         try:
             profile = skyblock_data["cute_name"]
+            gamemode = skyblock_data["game_mode"]
         except:
-            embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please contact the developer at Mini#9609.""", color=0x08f730)
+            embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please contact the developer at Mini#9609.""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -215,7 +224,7 @@ class Profile(commands.Cog):
 
         farming_stats = await get_farming_stats(self.bot, skyblock_data, uuid)
         if farming_stats[0] == 0:
-            embed = discord.Embed(title=f"Error",description=f"""{farming_stats[1]}""", color=0x08f730)
+            embed = discord.Embed(title=f"Error",description=f"""{farming_stats[1]}""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -238,12 +247,20 @@ class Profile(commands.Cog):
         highest_collection_name = farming_stats["highest_collection_name"]
         highest_collection_amount = f"{int(farming_stats['highest_collection_amount']):,}"
         skyblock_level =  farming_stats["skyblock_level"]
+        last_10_contests = farming_stats["last_10_contests"]
         best_contest = farming_stats["best_contest"]
         medal_inventory = farming_stats["medal_inventory"]
         unique_golds = farming_stats["unique_golds"]
+        is_ironman = False
+        ironman_string = ""
+        if gamemode == "ironman":
+            is_ironman = True
+        
+        if is_ironman:
+            ironman_string += IRONMAN_EMOJI
 
-        embed = discord.Embed(title=f"{ign}'s Farming Stats ({profile}) - Lvl {skyblock_level}",
-                              color=0x08f730)
+        embed = discord.Embed(title=f"{ign}'s Farming Stats ({profile} {ironman_string}) - Lvl {skyblock_level}",
+                              color=EMBED_COLOR)
 
         embed.add_field(name="Farming Level",
                         value=f"{farming_level}",
@@ -268,7 +285,7 @@ class Profile(commands.Cog):
         embed.set_footer(text="Made by Farming Council - Weight by Elite Bot",
                  icon_url="https://i.imgur.com/4YXjLqq.png")
 
-        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, best_contest, medal_inventory, unique_golds)
+        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, ironman_string)
         await self.bot.command_counter(interaction)
         await interaction.edit_original_response(embed=embed, view=view)
 
@@ -315,7 +332,7 @@ async def get_farming_stats(self, skyblock_data, uuid):
         farming_weight = farming_weight[1]
         farming_weight = round(farming_weight["total"], 2)
         skyblock_level = int(member["leveling"]["experience"] / 100)
-        best_contest, medal_inventory, unique_golds = await get_farming_contests(self, member)
+        last_10_contests, best_contest, medal_inventory, unique_golds = await get_farming_contests(self, member)
         
 
         return [1, {
@@ -329,6 +346,7 @@ async def get_farming_stats(self, skyblock_data, uuid):
             "farming_minions": farming_minions, 
             "farming_weight": farming_weight, 
             "skyblock_level": skyblock_level,
+            "last_10_contests": last_10_contests,
             "best_contest": best_contest, 
             "medal_inventory": medal_inventory,
             "unique_golds": unique_golds
@@ -409,16 +427,16 @@ async def get_farming_minions(self, json):
             minion_levels[minion_type] = 0
 
     minions_string += f"""
-    <:Wheat:1042829818133217300> Wheat: {minion_levels["WHEAT"]}
-    <:carrot:1042829823741001798> Carrot: {minion_levels["CARROT"]}
-    <:potato:1042829840140750848> Potato: {minion_levels["POTATO"]}
-    <:Melon:1042829832939126854> Melon: {minion_levels["MELON"]}
-    <:Pumpkin:1042829845203255357> Pumpkin: {minion_levels["PUMPKIN"]}
-    <:CocoaBeans:1042829825141919827> Cocoa: {minion_levels["COCOA"]}
-    <:sugar_cane:1042829849456287854> Sugar Cane: {minion_levels["SUGAR_CANE"]}
-    <:Cactus:1042829821971025951> Cactus: {minion_levels["CACTUS"]}
-    <:mushroom:1042829836894339072> Mushroom: {minion_levels["MUSHROOM"]}
-    <:NetherWarts:1042829838655959050> Nether Wart: {minion_levels["NETHER_WARTS"]}
+    <:Wheat:1098455633554059404> Wheat: {minion_levels["WHEAT"]}
+    <:carrot1:1098455722028695662> Carrot: {minion_levels["CARROT"]}
+    <:potato1:1098455630081171497> Potato: {minion_levels["POTATO"]}
+    <:Melon:1098455629103910912> Melon: {minion_levels["MELON"]}
+    <:Pumpkin:1098455627690426478> Pumpkin: {minion_levels["PUMPKIN"]}
+    <:CocoaBeans:1098455625073176587> Cocoa: {minion_levels["COCOA"]}
+    <:sugar_cane:1098455626075607121> Sugar Cane: {minion_levels["SUGAR_CANE"]}
+    <:Cactus:1098455623890370681> Cactus: {minion_levels["CACTUS"]}
+    <:mushroom1:1098455620845314108> Mushroom: {minion_levels["MUSHROOM"]}
+    <:NetherWarts:1098455622929883166> Nether Wart: {minion_levels["NETHER_WARTS"]}
     """
 
     return minions_string
@@ -432,8 +450,31 @@ async def get_farming_contests(self, member):
     best_contest_string = ""
     medal_inventory_string = ""
     unique_golds_string = ""
+    last_10_contests_string = ""
 
-    # TODO: Last 10 Contests
+    contest_names = sorted(contests.keys(), reverse=True)
+    last_10_contests = contest_names[:10]
+
+    for contest in last_10_contests:
+        contest_data = contests[contest]
+        if "INK_SACK:3" in contest:
+            contest = "INK_SACK:3"
+        else:
+            contest = contest.split(":")[2]
+        try:
+            medal = contest_data["claimed_medal"]
+            last_10_contests_string += f"{MEDAL_EMOJIS[medal]} {COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contest_data['collected']):,}\n"
+        except:
+            last_10_contests_string += f"{COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contest_data['collected']):,}\n"
+
+    # for contest in last_10_contests:
+    #     if "INK_SACK:3" in contest:
+    #         contest = "INK_SACK:3"
+    #     else:
+    #         contest = contest.split(":")[2]
+    #     try:
+    #         medal = contests[contest]["claimed_medal"]
+    #         last_10_contests_string += f"{MEDAL_EMOJIS[medal]} {COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contests[contest]['collected']):,}\n"
 
     # for contest in last_10_contests:
     #     contest_amount = contest["collected"]
@@ -470,8 +511,7 @@ async def get_farming_contests(self, member):
         {MEDAL_EMOJIS["bronze"]} Bronze: {medals_inv["bronze"]}
     """
 
-
-    return best_contest_string, medal_inventory_string, unique_golds_string
+    return last_10_contests_string, best_contest_string, medal_inventory_string, unique_golds_string
 
 async def get_farming_weight(self, member, json):
     weight = 0

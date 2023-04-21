@@ -14,6 +14,7 @@ import time
 import datetime
 import matplotlib.pyplot as plt
 from discord import Button, ButtonStyle
+from utils import EMBED_COLOR
 
 if TYPE_CHECKING:
     from utils import FarmingCouncil
@@ -53,7 +54,7 @@ class MyView(discord.ui.View):
             sorting = sorted(sorting.items(), key=lambda x:x[1], reverse=True) 
             for i in sorting:
                 send += i[0]
-            embed = discord.Embed(title = f"Crop Profits at `{self.farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**BAZZAR PRICE**__\n{send}", color=0x2F3136)
+            embed = discord.Embed(title = f"Crop Profits at `{self.farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**BAZZAR PRICE**__\n{send}", color=EMBED_COLOR)
         else:
             button.label = "Bazaar Price"
             button.style = discord.ButtonStyle.green
@@ -68,7 +69,7 @@ class MyView(discord.ui.View):
             for i in sorting:
                 send += i[0]
             
-            embed = discord.Embed(title = f"Crop Profits at `{self.farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the NPC **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**NPC PRICE**__\n{send}", color=0x2F3136)
+            embed = discord.Embed(title = f"Crop Profits at `{self.farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the NPC **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**NPC PRICE**__\n{send}", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -112,7 +113,7 @@ class crops(commands.Cog):
         sorting = sorted(sorting.items(), key=lambda x:x[1], reverse=True) 
         for i in sorting:
             send += i[0]
-        embed = discord.Embed(title = f"Crop Profits at `{farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**BAZZAR PRICE**__\n{send}", color=0x2F3136)
+        embed = discord.Embed(title = f"Crop Profits at `{farming_fortune}` Farming Fortune in Coins/hour", description = f"This value is based on the current bazaar **Sell Price** and that you run at a speed of 20 blocks per second while farming. In addition to that we assume that you sell the **Enchanted** variant of each crop!\n\n__**BAZZAR PRICE**__\n{send}", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made by FarmingCouncil",
                     icon_url="https://i.imgur.com/4YXjLqq.png")
