@@ -63,7 +63,7 @@ TOOL_EMOJIS = {
 IRONMAN_EMOJI = "<:ironman:1099050581454246000>"
 
 class MyView(discord.ui.View):
-    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, ironman):
+    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals, ironman):
         self.bot: FarmingCouncil = bot
         self.ign = ign
         self.profile = profile
@@ -81,6 +81,8 @@ class MyView(discord.ui.View):
         self.best_contest = best_contest
         self.medal_inventory = medal_inventory
         self.unique_golds = unique_golds
+        self.total_number_of_contests = total_number_of_contests
+        self.total_medals = total_medals
         self.ironman = ironman
         super().__init__()
 
@@ -111,7 +113,7 @@ class MyView(discord.ui.View):
                         inline=True)
 
         embed.add_field(name="Best Collection",
-                        value=f"{self.highest_collection_name}: {self.highest_collection_amount}",
+                        value=f"{self.highest_collection_name}: **{self.highest_collection_amount}**",
                         inline=True)
 
         embed.set_footer(text="Made by Farming Council - Weight by Elite Bot",
@@ -164,12 +166,12 @@ class MyView(discord.ui.View):
                         value=f"{self.unique_golds}",
                         inline=True)
 
-        embed.add_field(name="Medal Inventory",
+        embed.add_field(name="Medals (Owned/Total)",
                         value=f"{self.medal_inventory}",
                         inline=True)
         
-        embed.add_field(name="Best Contest",
-                        value=f"{self.best_contest}",
+        embed.add_field(name="Total Contest Stats",
+                        value=f"Best Contest: {self.best_contest}Total Contests: **{self.total_number_of_contests}**\nTotal Medals: **{self.total_medals}**",
                         inline=True)
 
         embed.set_footer(text="Made by Farming Council",
@@ -255,6 +257,9 @@ class Profile(commands.Cog):
         best_contest = farming_stats["best_contest"]
         medal_inventory = farming_stats["medal_inventory"]
         unique_golds = farming_stats["unique_golds"]
+        total_number_of_contests = farming_stats["total_number_of_contests"]
+        total_medals = farming_stats["total_medals"]
+
         is_ironman = False
         ironman_string = ""
         if gamemode == "ironman":
@@ -288,13 +293,13 @@ class Profile(commands.Cog):
                         inline=True)
 
         embed.add_field(name="Best Collection",
-                        value=f"{highest_collection_name}: {highest_collection_amount}",
+                        value=f"{highest_collection_name}: **{highest_collection_amount}**",
                         inline=True)
 
         embed.set_footer(text="Made by Farming Council - Weight by Elite Bot",
                  icon_url="https://i.imgur.com/4YXjLqq.png")
 
-        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, ironman_string)
+        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals, ironman_string)
         await self.bot.command_counter(interaction)
         await interaction.edit_original_response(embed=embed, view=view)
 
@@ -341,9 +346,8 @@ async def get_farming_stats(self, skyblock_data, uuid):
         farming_weight = farming_weight[1]
         farming_weight = round(farming_weight["total"], 2)
         skyblock_level = int(member["leveling"]["experience"] / 100)
-        last_10_contests, best_contest, medal_inventory, unique_golds = await get_farming_contests(self, member)
+        last_10_contests, best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals = await get_farming_contests(self, member)
         
-
         return [1, {
             "farming_level": farming_level,
             "farming_total_xp": farming_total_xp,
@@ -358,7 +362,9 @@ async def get_farming_stats(self, skyblock_data, uuid):
             "last_10_contests": last_10_contests,
             "best_contest": best_contest, 
             "medal_inventory": medal_inventory,
-            "unique_golds": unique_golds
+            "unique_golds": unique_golds,
+            "total_number_of_contests": total_number_of_contests,
+            "total_medals": total_medals
             }]
     else:
         return [0, "Error: No player found. Please try again later or contact the developer at Mini#9609."]
@@ -378,16 +384,16 @@ async def get_farming_collections(self, member):
     highest_collection_amount = collections_amounts[highest_collection]
 
     collections_string += f"""
-    {COLLECTIONS_DICT["WHEAT"][1]} Wheat: {int(collections_amounts["WHEAT"]):,}
-    {COLLECTIONS_DICT["CARROT_ITEM"][1]} Carrot: {int(collections_amounts["CARROT_ITEM"]):,}
-    {COLLECTIONS_DICT["POTATO_ITEM"][1]} Potato: {int(collections_amounts["POTATO_ITEM"]):,}
-    {COLLECTIONS_DICT["MELON"][1]} Melon: {int(collections_amounts["MELON"]):,}
-    {COLLECTIONS_DICT["PUMPKIN"][1]} Pumpkin: {int(collections_amounts["PUMPKIN"]):,}
-    {COLLECTIONS_DICT["INK_SACK:3"][1]} Cocoa: {int(collections_amounts["INK_SACK:3"]):,}
-    {COLLECTIONS_DICT["SUGAR_CANE"][1]} Sugar Cane: {int(collections_amounts["SUGAR_CANE"]):,}
-    {COLLECTIONS_DICT["CACTUS"][1]} Cactus: {int(collections_amounts["CACTUS"]):,}
-    {COLLECTIONS_DICT["MUSHROOM_COLLECTION"][1]} Mushroom: {int(collections_amounts["MUSHROOM_COLLECTION"]):,}
-    {COLLECTIONS_DICT["NETHER_STALK"][1]} Nether Wart: {int(collections_amounts["NETHER_STALK"]):,}
+    {COLLECTIONS_DICT["WHEAT"][1]} Wheat: **{int(collections_amounts["WHEAT"]):,}**
+    {COLLECTIONS_DICT["CARROT_ITEM"][1]} Carrot: **{int(collections_amounts["CARROT_ITEM"]):,}**
+    {COLLECTIONS_DICT["POTATO_ITEM"][1]} Potato: **{int(collections_amounts["POTATO_ITEM"]):,}**
+    {COLLECTIONS_DICT["MELON"][1]} Melon: **{int(collections_amounts["MELON"]):,}**
+    {COLLECTIONS_DICT["PUMPKIN"][1]} Pumpkin: **{int(collections_amounts["PUMPKIN"]):,}**
+    {COLLECTIONS_DICT["INK_SACK:3"][1]} Cocoa: **{int(collections_amounts["INK_SACK:3"]):,}**
+    {COLLECTIONS_DICT["SUGAR_CANE"][1]} Sugar Cane: **{int(collections_amounts["SUGAR_CANE"]):,}**
+    {COLLECTIONS_DICT["CACTUS"][1]} Cactus: **{int(collections_amounts["CACTUS"]):,}**
+    {COLLECTIONS_DICT["MUSHROOM_COLLECTION"][1]} Mushroom: **{int(collections_amounts["MUSHROOM_COLLECTION"]):,}**
+    {COLLECTIONS_DICT["NETHER_STALK"][1]} Nether Wart: **{int(collections_amounts["NETHER_STALK"]):,}**
     """
 
     return collections_string, highest_collection_name, highest_collection_amount
@@ -400,17 +406,20 @@ async def get_farming_tools(self, member):
     backpacks = member["backpack"]
     for item in inventory:
         if "attributes" in item:
-            if item["attributes"]["id"] in FARMING_ITEMS:
-                tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
+            if "id" in item["attributes"]:
+                if item["attributes"]["id"] in FARMING_ITEMS:
+                    tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
     for item in ender_chest:
         if "attributes" in item:
-            if item["attributes"]["id"] in FARMING_ITEMS:
-                tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
+            if "id" in item["attributes"]:
+                if item["attributes"]["id"] in FARMING_ITEMS:
+                    tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
     for backpack in backpacks:
         for item in backpack:
             if "attributes" in item:
-                if item["attributes"]["id"] in FARMING_ITEMS:
-                    tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
+                if "id" in item["attributes"]:
+                    if item["attributes"]["id"] in FARMING_ITEMS:
+                        tools.append(f"{TOOL_EMOJIS[item['attributes']['id']]} {item['name'][2:]}")
 
     if len(tools) == 0:
         return "No Farming Tools\n"
@@ -435,16 +444,16 @@ async def get_farming_minions(self, json):
             minion_levels[minion_type] = 0
 
     minions_string += f"""
-    <:Wheat:1042829818133217300> Wheat: {minion_levels["WHEAT"]}
-    <:carrot:1042829823741001798> Carrot: {minion_levels["CARROT"]}
-    <:potato:1042829840140750848> Potato: {minion_levels["POTATO"]}
-    <:Melon:1042829832939126854> Melon: {minion_levels["MELON"]}
-    <:Pumpkin:1042829845203255357> Pumpkin: {minion_levels["PUMPKIN"]}
-    <:CocoaBeans:1042829825141919827> Cocoa: {minion_levels["COCOA"]}
-    <:sugar_cane:1042829849456287854> Sugar Cane: {minion_levels["SUGAR_CANE"]}
-    <:Cactus:1042829821971025951> Cactus: {minion_levels["CACTUS"]}
-    <:mushroom:1042829836894339072> Mushroom: {minion_levels["MUSHROOM"]}
-    <:NetherWarts:1042829838655959050> Nether Wart: {minion_levels["NETHER_WARTS"]}
+    <:Wheat:1042829818133217300> Wheat: **{minion_levels["WHEAT"]}**
+    <:carrot:1042829823741001798> Carrot: **{minion_levels["CARROT"]}**
+    <:potato:1042829840140750848> Potato: **{minion_levels["POTATO"]}**
+    <:Melon:1042829832939126854> Melon: **{minion_levels["MELON"]}**
+    <:Pumpkin:1042829845203255357> Pumpkin: **{minion_levels["PUMPKIN"]}**
+    <:CocoaBeans:1042829825141919827> Cocoa: **{minion_levels["COCOA"]}**
+    <:sugar_cane:1042829849456287854> Sugar Cane: **{minion_levels["SUGAR_CANE"]}**
+    <:Cactus:1042829821971025951> Cactus: **{minion_levels["CACTUS"]}**
+    <:mushroom:1042829836894339072> Mushroom: **{minion_levels["MUSHROOM"]}**
+    <:NetherWarts:1042829838655959050> Nether Wart: **{minion_levels["NETHER_WARTS"]}**
     """
 
     return minions_string
@@ -459,6 +468,43 @@ async def get_farming_contests(self, member):
     unique_golds_string = ""
     last_10_contests_string = ""
 
+    total_number_of_contests = len(contests)
+    total_gold_medals = 0
+    total_silver_medals = 0
+    total_bronze_medals = 0
+
+    for contestKey in contests:
+        contest = contests[contestKey]
+        try:
+            medal = contest["claimed_medal"]
+        except:
+            medal = None
+        try:
+            position = contest["claimed_position"]
+        except:
+            position = None
+        try:
+            participants = contest["claimed_participants"]
+        except:
+            participants = None
+
+        if medal is not None and medal in ['bronze', 'silver', 'gold']:
+            if medal == 'gold':
+                total_gold_medals += 1
+            elif medal == 'silver':
+                total_silver_medals += 1
+            elif medal == 'bronze':
+                total_bronze_medals += 1
+        elif position is not None and participants:
+            if position <= participants * 0.05 + 1:
+                total_gold_medals += 1
+            elif position <= participants * 0.25 + 1:
+                total_silver_medals += 1
+            elif position <= participants * 0.6 + 1:
+                total_bronze_medals += 1
+    
+    total_medals = total_gold_medals + total_silver_medals + total_bronze_medals
+
     contest_names = sorted(contests.keys(), reverse=True)
     last_10_contests = contest_names[:10]
 
@@ -470,9 +516,9 @@ async def get_farming_contests(self, member):
             contest = contest.split(":")[2]
         try:
             medal = contest_data["claimed_medal"]
-            last_10_contests_string += f"{MEDAL_EMOJIS[medal]} {COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contest_data['collected']):,}\n"
+            last_10_contests_string += f"{MEDAL_EMOJIS[medal]} {COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - **{int(contest_data['collected']):,}**\n"
         except:
-            last_10_contests_string += f"{COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - {int(contest_data['collected']):,}\n"
+            last_10_contests_string += f"{COLLECTIONS_DICT[contest][1]} {COLLECTIONS_DICT[contest][0]} - **{int(contest_data['collected']):,}**\n"
 
     try:
         unique_golds = jacob_contents["unique_golds2"]
@@ -496,15 +542,15 @@ async def get_farming_contests(self, member):
 
     best_contest_amount = best_collected
     best_contest_type = best_contest.split(":")[2]
-    best_contest_string += f"{COLLECTIONS_DICT[best_contest_type][1]} {COLLECTIONS_DICT[best_contest_type][0]} - {int(best_contest_amount):,}\n"
+    best_contest_string += f"{COLLECTIONS_DICT[best_contest_type][1]} {COLLECTIONS_DICT[best_contest_type][0]} - **{int(best_contest_amount):,}**\n"
 
     medal_inventory_string += f"""
-        {MEDAL_EMOJIS["gold"]} Gold: {medals_inv["gold"]}
-        {MEDAL_EMOJIS["silver"]} Silver: {medals_inv["silver"]}
-        {MEDAL_EMOJIS["bronze"]} Bronze: {medals_inv["bronze"]}
+    {MEDAL_EMOJIS["gold"]} Gold: **{medals_inv["gold"]}** / **{total_gold_medals}**
+    {MEDAL_EMOJIS["silver"]} Silver: **{medals_inv["silver"]}** / **{total_silver_medals}**
+    {MEDAL_EMOJIS["bronze"]} Bronze: **{medals_inv["bronze"]}** / **{total_bronze_medals}**
     """
 
-    return last_10_contests_string, best_contest_string, medal_inventory_string, unique_golds_string
+    return last_10_contests_string, best_contest_string, medal_inventory_string, unique_golds_string, total_number_of_contests, total_medals
 
 async def get_farming_weight(self, member, json):
     weight = 0
