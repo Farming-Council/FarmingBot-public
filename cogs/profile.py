@@ -41,8 +41,8 @@ TOOL_EMOJIS = {
     "PUMPKIN_DICER": "<:pumpkin_dicer:1099036044868997140>",
     "PUMPKIN_DICER_2": "<:pumpkin_dicer:1099036044868997140>",
     "PUMPKIN_DICER_3": "<:pumpkin_dicer:1099036044868997140>",
-    "CACTUS_KNIFE": "<:cactus_knife:1099038077911056414>",
-    "FUNGI_CUTTER": "<:fungi_cutter:1099037924894441552>",
+    "CACTUS_KNIFE": "<:cactus_knife:1099058659918630972>",
+    "FUNGI_CUTTER": "<:fungi_cutter:1099058661990617172>",
     "THEORETICAL_HOE_WHEAT_1": "<:euclids_wheat_hoe_t1:1099036301426180106>",
     "THEORETICAL_HOE_WHEAT_2": "<:euclids_wheat_hoe_t2:1099036302709633168>",
     "THEORETICAL_HOE_WHEAT_3": "<:euclids_wheat_hoe_t3:1099036062669623386>",
@@ -192,7 +192,7 @@ class Profile(commands.Cog):
             ign = interaction.user.display_name
 
 
-        embed = discord.Embed(title=f"Loading",description=f"""Checking {ign}'s Farming Stats!""", color=EMBED_COLOR)
+        embed = discord.Embed(title=f"Loading",description=f"""Checking {ign}'s Farming Profile!""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Made By Farming Council", 
                     icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -454,7 +454,6 @@ async def get_farming_contests(self, member):
     jacob_contents = member["jacob2"]
     medals_inv = jacob_contents["medals_inv"]
     contests = jacob_contents["contests"]
-    unique_golds = jacob_contents["unique_golds2"]
 
     best_contest_string = ""
     medal_inventory_string = ""
@@ -494,11 +493,15 @@ async def get_farming_contests(self, member):
     #     except:
     #         last_10_contests_string += f"{COLLECTIONS_DICT[contest_type][1]} {COLLECTIONS_DICT[contest_type][0]} - {int(contest_amount):,} (UNCLAIMED)\n"
 
-    if len(unique_golds) == 0:
+    try:
+        unique_golds = jacob_contents["unique_golds2"]
+        if len(unique_golds) == 0:
+            unique_golds_string = "No Unique Golds\n"
+        else:
+            for unique_gold in unique_golds:
+                unique_golds_string += f"{COLLECTIONS_DICT[unique_gold][1]} {COLLECTIONS_DICT[unique_gold][0]}\n"
+    except:
         unique_golds_string = "No Unique Golds\n"
-    else:
-        for unique_gold in unique_golds:
-            unique_golds_string += f"{COLLECTIONS_DICT[unique_gold][1]} {COLLECTIONS_DICT[unique_gold][0]}\n"
 
     
     best_collected = 0
