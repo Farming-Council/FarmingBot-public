@@ -224,7 +224,7 @@ class Profile(commands.Cog):
             if profile == 0:
                 embed = discord.Embed(title=f"Error",description=f"""{ign} does not have a profile!""", color=EMBED_COLOR)
             else:
-                embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please contact the developer at Mini#9609.""", color=EMBED_COLOR)
+                embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please open a support ticket.""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -370,7 +370,7 @@ async def get_farming_stats(self, skyblock_data, uuid):
             "total_medals": total_medals
             }]
     else:
-        return [0, "Error: No player found. Please try again later or contact the developer at Mini#9609."]
+        return [0, "Error: No player found. Please try again later or open a support ticket."]
 
 async def get_farming_collections(self, member):
     collections = member["collection"]

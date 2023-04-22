@@ -18,21 +18,59 @@ class Weight(commands.Cog):
     @app_commands.command(description="Gets a users weight")
     @app_commands.guild_only()
     async def weight(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
-        embed = discord.Embed(title=f"Loading",description=f"""Checking your Collections!""", color=EMBED_COLOR)
-        embed.set_image(url='attachment://image.png')
-        embed.set_footer(text="Weight By Elite Bot",
-                        icon_url="https://i.imgur.com/4YXjLqq.png")
-        await interaction.response.send_message(embed=embed)
+
         if ign is None:
             ign = await self.bot.get_db_info(interaction.user.id)
         if type(ign) == int or ign == None:
             ign = interaction.user.display_name
-        uuid = await self.bot.get_uuid(ign)
+
+        embed = discord.Embed(title=f"Loading",description=f"""Obtaining {ign}'s Farming Weight!""", color=EMBED_COLOR)
+        embed.set_image(url='attachment://image.png')
+        embed.set_footer(text="Weight By Elite Bot",
+                        icon_url="https://i.imgur.com/4YXjLqq.png")
+        await interaction.response.send_message(embed=embed)
+
+        try:
+            uuid = await self.bot.get_uuid(ign)
+        except:
+            embed = discord.Embed(title=f"Error",description=f"""{ign} does not exist!""", color=EMBED_COLOR)
+            embed.set_image(url='attachment://image.png')
+            embed.set_footer(text="Made by Farming Council",
+                        icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.edit_original_response(embed=embed)
+            return
+
+        if profile == "":
+            profile = 0
         if profile == None:
-            profile = await self.bot.get_most_recent_profile(uuid)
+            profile = 0
+
+        skyblock_data = await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid)
+
+        try:
+            profile = skyblock_data["cute_name"]
+        except:
+            if profile == 0:
+                embed = discord.Embed(title=f"Error",description=f"""{ign} does not have a profile!""", color=EMBED_COLOR)
+            else:
+                embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please open a support ticket.""", color=EMBED_COLOR)
+            embed.set_image(url='attachment://image.png')
+            embed.set_footer(text="Made by Farming Council",
+                        icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.edit_original_response(embed=embed)
+            return
+
         weight = await calculate_farming_weight(self.bot, ign, profile)
+        if (weight[0] == 0):
+            embed = discord.Embed(title=f"Error",description=f"""{weight[1]}""", color=EMBED_COLOR)
+            embed.set_image(url='attachment://image.png')
+            embed.set_footer(text="Weight By Elite Bot",
+                        icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.edit_original_response(embed=embed)
+            return
+        
         weight = weight[1]
-        embed = discord.Embed(title=f"{ign}'s Weight",description=f"""Collection: **{round(weight["collection_total"]["total"], 2)}**\nFarming Levels: **{round(weight['farming_weight']['farming_weight'], 2)}**\nMinions: **{round(weight['minions']['minion_weight'], 2)}**\nAnita / Gold medals: **{round(weight["jacub"]['jacub_weight']+weight["gold"]["gold_weight"], 2)}**\n\nTotal: `{round(weight["total"], 2)}`\n\nView full calculations on [elitebot.dev](https://elitebot.dev/)""", color=EMBED_COLOR)
+        embed = discord.Embed(title=f"{ign}'s Weight",description=f"""Collection: **{round(weight["collection_total"]["total"], 2)}**\nFarming Levels: **{round(weight['farming_weight']['farming_weight'], 2)}**\nMinions: **{round(weight['minions']['minion_weight'], 2)}**\nAnita / Gold medals: **{round(weight["jacob"]['jacob_weight']+weight["gold"]["gold_weight"], 2)}**\n\nTotal: `{round(weight["total"], 2)}`\n\nView full calculations on [elitebot.dev](https://elitebot.dev/)""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Weight By Elite Bot",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -113,12 +151,12 @@ async def calculate_farming_weight(self, ign,profile = ""):
                     weight+=5
                     minion_weight+=5
                     minions.append(i)
-        jacub_weight = 0
-        jacub_perks = 0
+        jacob_weight = 0
+        jacob_perks = 0
         try:
             weight += member["jacob2"]["perks"]["double_drops"]*2
-            jacub_weight+=member["jacob2"]["perks"]["double_drops"]*2
-            jacub_perks+=member["jacob2"]["perks"]["double_drops"]
+            jacob_weight+=member["jacob2"]["perks"]["double_drops"]*2
+            jacob_perks+=member["jacob2"]["perks"]["double_drops"]
 
         except:
             pass
@@ -143,9 +181,9 @@ async def calculate_farming_weight(self, ign,profile = ""):
             gold = 50 * round(gold / 50)
             gold_weight += gold / 50 *25
         
-        return [1,{"profile":profile,"total":weight,"collection_total":{"total":total+mushroomWeight,"cactus":cactus,"carrot":carrot,"cocoa":cocoa,"melon":melon,"wart":wart,"potato":potato,"pumpkin":pumpkin,"sugar":sugar,"wheat":wheat,"mushroom":mushroomWeight},"farming_weight":{"farming_weight":farming_weight,"farming_level":farming_level},"minions":{"minion_weight":minion_weight,"minions":minions},"jacub":{"jacub_weight":jacub_weight,"jacub_perks":jacub_perks},"gold":{"golds":gold,"gold_weight":gold_weight}}]
+        return [1,{"profile":profile,"total":weight,"collection_total":{"total":total+mushroomWeight,"cactus":cactus,"carrot":carrot,"cocoa":cocoa,"melon":melon,"wart":wart,"potato":potato,"pumpkin":pumpkin,"sugar":sugar,"wheat":wheat,"mushroom":mushroomWeight},"farming_weight":{"farming_weight":farming_weight,"farming_level":farming_level},"minions":{"minion_weight":minion_weight,"minions":minions},"jacob":{"jacob_weight":jacob_weight,"jacob_perks":jacob_perks},"gold":{"golds":gold,"gold_weight":gold_weight}}]
     else:
-        return [0,"Error: No player found. Please try again later or contact the developer at CosmicCrow#6355."]
+        return [0,"Error Obtaining Weight"]
 
 
 async def setup(bot: FarmingCouncil) -> None:
