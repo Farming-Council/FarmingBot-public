@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 from discord.ext import commands
+from utils import EMBED_COLOR
 
 from errors import PlayerNotFoundError, InvalidMinecraftUsername
 
@@ -24,7 +25,7 @@ class Suggestion(commands.Cog):
     @app_commands.checks.cooldown(3, 86400, key=lambda i: (i.user.id))
     async def suggest(self, interaction: discord.Interaction, suggestion: str):
         channel = self.bot.get_channel(1071503868925575249)
-        e = discord.Embed(title="Suggestion", description=f"{suggestion}\n\nSent by: {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})\nFrom server: {interaction.guild.name} ({interaction.guild.id})", color=0x2F3136)
+        e = discord.Embed(title="Suggestion", description=f"{suggestion}\n\nSent by: {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})\nFrom server: {interaction.guild.name} ({interaction.guild.id})", color=EMBED_COLOR)
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         if channel:
             await channel.send(embed=e)

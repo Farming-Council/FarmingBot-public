@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 from discord.ext import commands
+from utils import EMBED_COLOR
 if TYPE_CHECKING:
     from utils import FarmingCouncil
     
@@ -17,7 +18,7 @@ class Weight(commands.Cog):
     @app_commands.command(description="Gets a users weight")
     @app_commands.guild_only()
     async def weight(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
-        embed = discord.Embed(title=f"Loading",description=f"""Checking your Collections!""", color=0x2F3136)
+        embed = discord.Embed(title=f"Loading",description=f"""Checking your Collections!""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Weight By Elite Bot",
                         icon_url="https://i.imgur.com/4YXjLqq.png")
@@ -31,7 +32,7 @@ class Weight(commands.Cog):
             profile = await self.bot.get_most_recent_profile(uuid)
         weight = await calculate_farming_weight(self.bot, ign, profile)
         weight = weight[1]
-        embed = discord.Embed(title=f"{ign}'s Weight",description=f"""Collection: **{round(weight["collection_total"]["total"], 2)}**\nFarming Levels: **{round(weight['farming_weight']['farming_weight'], 2)}**\nMinions: **{round(weight['minions']['minion_weight'], 2)}**\nAnita / Gold medals: **{round(weight["jacub"]['jacub_weight']+weight["gold"]["gold_weight"], 2)}**\n\nTotal: `{round(weight["total"], 2)}`\n\nView full calculations on [elitebot.dev](https://elitebot.dev/)""", color=0x2F3136)
+        embed = discord.Embed(title=f"{ign}'s Weight",description=f"""Collection: **{round(weight["collection_total"]["total"], 2)}**\nFarming Levels: **{round(weight['farming_weight']['farming_weight'], 2)}**\nMinions: **{round(weight['minions']['minion_weight'], 2)}**\nAnita / Gold medals: **{round(weight["jacub"]['jacub_weight']+weight["gold"]["gold_weight"], 2)}**\n\nTotal: `{round(weight["total"], 2)}`\n\nView full calculations on [elitebot.dev](https://elitebot.dev/)""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
         embed.set_footer(text="Weight By Elite Bot",
                         icon_url="https://i.imgur.com/4YXjLqq.png")

@@ -13,6 +13,7 @@ import sys, os
 import time
 import datetime
 import matplotlib.pyplot as plt
+from utils import EMBED_COLOR
 
 if TYPE_CHECKING:
     from utils import FarmingCouncil
@@ -126,13 +127,13 @@ class contesttracker(commands.Cog):
             plt.savefig('image.png', transparent=True)
             image = discord.File("image.png")
             embed = discord.Embed(
-                title="Contests Tracker", description=f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{a}{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{timecounter}`", color=0x2F3136)
+                title="Contests Tracker", description=f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{a}{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{timecounter}`", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by FarmingCouncil",
                             icon_url="https://i.imgur.com/4YXjLqq.png")
             if send == {}:
                 embed = discord.Embed(
-                    title="Contests Tracker", description=f"`{ign}` has not particpated in any **Jacob Contest's** in the past `{time_period}`", color=0x2F3136)
+                    title="Contests Tracker", description=f"`{ign}` has not particpated in any **Jacob Contest's** in the past `{time_period}`", color=EMBED_COLOR)
                 await interaction.edit_original_response(content="", embed=embed)
             else:
                 await interaction.edit_original_response(content="", embed=embed, attachments=[image])
