@@ -110,7 +110,6 @@ async def calculate_farming_weight(self, ign,profile = ""):
     except:
         pass
     if member:
-        
         try:
             farming_level = int(member["skills"]["farming"]["level"])
         except:
