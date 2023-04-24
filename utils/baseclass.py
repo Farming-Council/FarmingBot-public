@@ -58,9 +58,9 @@ class FarmingCouncil(commands.Bot):
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
                 await cursor.execute(
-                    """CREATE TABLE IF NOT EXISTS verification (
+                    """CREATE TABLE IF NOT EXISTS users (
                         user_id BIGINT NOT NULL UNIQUE,
-                        ign TEXT NOT NULL,
+                        uuid TEXT NOT NULL,
                         profile TEXT NOT NULL,
                         timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
                     )"""
@@ -442,7 +442,7 @@ class FarmingCouncil(commands.Bot):
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("SELECT * FROM verification WHERE user_id = %s", (discord_id,))
+                await cursor.execute("SELECT * FROM users WHERE user_id = %s", (discord_id,))
                 ign = await cursor.fetchone()
         if ign:
             return ign[1]
