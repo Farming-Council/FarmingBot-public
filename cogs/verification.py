@@ -22,7 +22,7 @@ main_guild = discord.Object(1020742260683448450)
 test_guild = discord.Object(1040291074410819594)
 
 
-class Verification(commands.Cog):
+class users(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
         self.bot: FarmingCouncil = bot
 
@@ -42,7 +42,7 @@ class Verification(commands.Cog):
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("SELECT * FROM verification WHERE user_id = %s", (interaction.user.id))
+                await cursor.execute("SELECT * FROM users WHERE user_id = %s", (interaction.user.id))
                 result = await cursor.fetchone()
         if result is None:
             return await interaction.followup.send("You are not linked!", ephemeral=True)
@@ -50,7 +50,7 @@ class Verification(commands.Cog):
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("DELETE FROM verification WHERE user_id = %s", (interaction.user.id))
+                await cursor.execute("DELETE FROM users WHERE user_id = %s", (interaction.user.id))
                 await conn.commit()
         if interaction.guild.id in [1040291074410819594,1020742260683448450]:
             try:
@@ -71,6 +71,7 @@ class Verification(commands.Cog):
     @app_commands.guild_only()
     @app_commands.describe(ign="Your Minecraft username", profile="Your Hypixel profile, leave blank for most recently played.")
     async def link(self, interaction: discord.Interaction, ign: str, profile: str=None):
+        await interaction.response.defer(ephemeral=True)
         assert isinstance(interaction.user, discord.Member)
         ign = ign or interaction.user.display_name
         await self.bot.command_counter(interaction)
@@ -122,7 +123,21 @@ class Verification(commands.Cog):
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("SELECT * FROM verification WHERE user_id = %s", (interaction.user.id))
+                await cursor.execute("SELECT * FROM users WHERE user_id = %s", (interaction.user.id))
+                result = await cursor.fetchone()
+        if result is not None:
+            return await interaction.followup.send(
+                embed=discord.Embed(
+                    title="\U0000274c Failed",
+                    description="You are already linked! \nUnlink your account with </unlink:1082814958871527565>).",
+                    color=discord.Colour.red()
+                )
+            )
+        async with self.bot.pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute("SELECT * FROM users WHERE uuid = %s", (uuid))
                 result = await cursor.fetchone()
         if result is not None:
             return await interaction.followup.send(
@@ -152,7 +167,7 @@ class Verification(commands.Cog):
                     conn: aiomysql.Connection
                     async with conn.cursor() as cursor:
                         cursor: aiomysql.Cursor
-                        await cursor.execute("INSERT INTO verification (user_id, ign, profile) VALUES (%s, %s, %s)", (interaction.user.id, ign, profile))
+                        await cursor.execute("INSERT INTO users (user_id, uuid, profile) VALUES (%s, %s, %s)", (interaction.user.id, uuid, profile))
                     await conn.commit()
             except pymysql.IntegrityError as e:
                 if e.args[0] == 1062:
@@ -202,6 +217,4 @@ async def calculate_farming_weight(self, uuid):
 
 
 async def setup(bot: FarmingCouncil) -> None:
-    await bot.add_cog(Verification(bot))
-
-
+    await bot.add_cog(users(bot))

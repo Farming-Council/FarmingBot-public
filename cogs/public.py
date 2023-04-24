@@ -27,7 +27,7 @@ class Public(commands.Cog):
     @app_commands.command(description="Credits for the bot")
     @app_commands.guild_only()
     async def credits(self, interaction: discord.Interaction):
-        e = discord.Embed(title="Credits", description="**Director** \n[TheThe](https://www.youtube.com/@FarmingCouncil)\n\n**Development Manager & Lead** \n[CosmicCrow](https://github.com/JeffreyWangDev)\n\n**Developer**\nDyslexus\nGalGadonut\n\n**Contributers**\n[Kaeso / Elite Bot](https://elitebot.dev/)\nDyslexus\nGalGadonut", color=EMBED_COLOR)
+        e = discord.Embed(title="Credits", description="**Director** \n[TheThe](https://www.youtube.com/@FarmingCouncil)\n\n**Development Manager & Lead** \n[CosmicCrow](https://github.com/JeffreyWangDev)\n\n**Developer**\nDyslexus\n[GalGadonut](https://github.com/bendonaldson)\n\n**Contributers**\n[Kaeso / Elite Bot](https://elitebot.dev/)", color=EMBED_COLOR)
         e.set_thumbnail(url="https://i.imgur.com/Z75ZL1L.png")
         e.set_footer(text="Made by FarmingCouncil", icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=e)

@@ -58,9 +58,9 @@ class FarmingCouncil(commands.Bot):
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
                 await cursor.execute(
-                    """CREATE TABLE IF NOT EXISTS verification (
+                    """CREATE TABLE IF NOT EXISTS users (
                         user_id BIGINT NOT NULL UNIQUE,
-                        ign TEXT NOT NULL,
+                        uuid TEXT NOT NULL,
                         profile TEXT NOT NULL,
                         timestamp BIGINT DEFAULT CURRENT_TIMESTAMP NOT NULL
                     )"""
@@ -140,7 +140,22 @@ class FarmingCouncil(commands.Bot):
             if req.status != 200:
                 raise KeyError(f"Recieved status code: {req.status}")
             js = await req.json()
-            return js["id"]
+            try:
+                return js["id"]
+            except KeyError:
+                return None
+
+    async def get_ign(self, uuid: str) -> str:
+        if self.session is None:
+            raise ConnectionError("aiohttp session has not been set")
+        async with self.session.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}") as req:
+            if req.status != 200:
+                raise KeyError(f"Recieved status code: {req.status}")
+            js = await req.json()
+            try:
+                return js["name"]
+            except KeyError:
+                return None
 
 
 
@@ -417,8 +432,8 @@ class FarmingCouncil(commands.Bot):
             except Exception as e:
                 return [0,"Hypixel is down"]
         return response['highest']['farming']['weight']
+        
     async def get_most_recent_profile(self, uuid):
-        print(uuid)
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
@@ -438,13 +453,14 @@ class FarmingCouncil(commands.Bot):
             return(info["cute_name"])
         
     async def get_db_info(self,discord_id):
+        """Returns the uuid of a user from discord iffrom the database"""
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("SELECT * FROM verification WHERE user_id = %s", (discord_id,))
-                ign = await cursor.fetchone()
-        if ign:
-            return ign[1]
+                await cursor.execute("SELECT * FROM users WHERE user_id = %s", (discord_id,))
+                uuid = await cursor.fetchone()
+        if uuid:
+            return uuid[1]
         else:
             return None
