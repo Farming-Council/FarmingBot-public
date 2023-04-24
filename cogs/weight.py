@@ -20,7 +20,8 @@ class Weight(commands.Cog):
     async def weight(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
 
         if ign is None:
-            ign = await self.bot.get_db_info(interaction.user.id)
+            uuid = await self.bot.get_db_info(interaction.user.id)
+            ign = await self.bot.get_ign(uuid)
         if type(ign) == int or ign == None:
             ign = interaction.user.display_name
 
