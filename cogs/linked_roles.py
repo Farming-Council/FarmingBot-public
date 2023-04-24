@@ -32,9 +32,7 @@ class Roles(commands.Cog):
                 embed = discord.Embed(title="Error", description="An error occurred while updating your roles.", color=discord.Color.red())
                 await interaction.followup.send(embed=embed)
         ign = await self.bot.get_db_info(interaction.user.id)
-        if type(ign) == int:
-            ign = interaction.user.display_name
-        uuid = await self.bot.get_uuid(ign)
+        uuid = await self.bot.get_db_info(interaction.user.id)
         weight = await self.bot.calculate_farming_weight(self.bot, uuid)
         role = get(interaction.guild.roles, name = "Certified Farmer")
         try:
