@@ -250,9 +250,10 @@ class Profile(commands.Cog):
         
         farming_stats = farming_stats[1]
         farming_level = farming_stats["farming_level"]
+        farming_level_xp = farming_stats["farming_level_xp"]
         farming_total_xp = farming_stats["farming_total_xp"]
         farming_total_xp = f"{farming_total_xp:,}"
-        if farming_level == 60:
+        if farming_level_xp == 60:
             farming_xp_to_next_level = "MAX"
         else:
             farming_xp_to_next_level = farming_stats["farming_xp_to_next_level"]
@@ -332,8 +333,17 @@ async def get_farming_stats(self, skyblock_data, uuid):
         # Farming Level and XP Stats
         try:
             farming_level = int(member["skills"]["farming"]["level"])
+            farming_level_xp = farming_level
+            try:
+                farming_max_level = 50 + int(member["jacob2"]["perks"]["farming_level_cap"])
+            except:
+                farming_max_level = 50
         except:
             farming_level = 0
+
+        if (farming_level > farming_max_level):
+            farming_level = farming_max_level
+
         try:
             farming_total_xp = int(member["skills"]["farming"]["xp"])
         except:
@@ -361,6 +371,7 @@ async def get_farming_stats(self, skyblock_data, uuid):
         
         return [1, {
             "farming_level": farming_level,
+            "farming_level_xp": farming_level_xp,
             "farming_total_xp": farming_total_xp,
             "farming_xp_to_next_level": farming_xp_to_next_level,
             "farming_tools": farming_tools,
