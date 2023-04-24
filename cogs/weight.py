@@ -17,7 +17,7 @@ class Weight(commands.Cog):
 
     @app_commands.command(description="Gets a users weight")
     @app_commands.guild_only()
-    async def weight(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
+    async def weight(self, interaction: discord.Interaction, ign: str, profile: str=""):
 
         if ign is None:
             uuid = await self.bot.get_db_info(interaction.user.id)

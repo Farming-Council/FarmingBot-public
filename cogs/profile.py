@@ -186,7 +186,7 @@ class Profile(commands.Cog):
 
     @app_commands.command(description="Get a user's farming profile!")
     @app_commands.guild_only()
-    async def profile(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
+    async def profile(self, interaction: discord.Interaction, ign: str, profile: str=""):
 
         try:
             if ign is None:
