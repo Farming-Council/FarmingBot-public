@@ -484,6 +484,19 @@ async def get_farming_contests(self, member):
     total_silver_medals = 0
     total_bronze_medals = 0
 
+    try:
+        gold_medals = medals_inv["gold"]
+    except:
+        gold_medals = 0
+    try:
+        silver_medals = medals_inv["silver"]
+    except:
+        silver_medals = 0
+    try:
+        bronze_medals = medals_inv["bronze"]
+    except:
+        bronze_medals = 0
+
     for contestKey in contests:
         contest = contests[contestKey]
         try:
@@ -561,9 +574,9 @@ async def get_farming_contests(self, member):
     best_contest_string += f"{COLLECTIONS_DICT[best_contest_type][1]} {COLLECTIONS_DICT[best_contest_type][0]} - **{int(best_contest_amount):,}**\n"
 
     medal_inventory_string += f"""
-    {MEDAL_EMOJIS["gold"]} Gold: **{medals_inv["gold"]}** / **{total_gold_medals}**
-    {MEDAL_EMOJIS["silver"]} Silver: **{medals_inv["silver"]}** / **{total_silver_medals}**
-    {MEDAL_EMOJIS["bronze"]} Bronze: **{medals_inv["bronze"]}** / **{total_bronze_medals}**
+    {MEDAL_EMOJIS["gold"]} Gold: **{gold_medals}** / **{total_gold_medals}**
+    {MEDAL_EMOJIS["silver"]} Silver: **{silver_medals}** / **{total_silver_medals}**
+    {MEDAL_EMOJIS["bronze"]} Bronze: **{bronze_medals}** / **{total_bronze_medals}**
     """
 
     return last_10_contests_string, best_contest_string, medal_inventory_string, unique_golds_string, total_number_of_contests, total_medals
@@ -575,16 +588,46 @@ async def get_farming_weight(self, member, json):
             farming_level = int(member["skills"]["farming"]["level"])
         except:
             farming_level = 0
-        cactus = int(member["collection"]["CACTUS"])/177254
-        carrot = int(member["collection"]["CARROT_ITEM"])/300000
-        cocoa = int(member["collection"]["INK_SACK:3"])/267174
-        melon = int(member["collection"]["MELON"])/450325
-        mushroom = int(member["collection"]["MUSHROOM_COLLECTION"])
-        wart = int(member["collection"]["NETHER_STALK"])/250000
-        potato = int(member["collection"]["POTATO_ITEM"])/300000
-        pumpkin = int(member["collection"]["PUMPKIN"])/90066
-        sugar = int(member["collection"]["SUGAR_CANE"])/200000
-        wheat = int(member["collection"]["WHEAT"])/100000
+        try:
+            cactus = int(member["collection"]["CACTUS"])/177254
+        except:
+            cactus = 0
+        try:
+            carrot = int(member["collection"]["CARROT_ITEM"])/300000
+        except:
+            carrot = 0
+        try:
+            cocoa = int(member["collection"]["INK_SACK:3"])/267174
+        except:
+            cocoa = 0
+        try:
+            melon = int(member["collection"]["MELON"])/450325
+        except:
+            melon = 0
+        try:
+            mushroom = int(member["collection"]["MUSHROOM_COLLECTION"])
+        except:
+            mushroom = 0
+        try:
+            wart = int(member["collection"]["NETHER_STALK"])/250000
+        except:
+            wart = 0
+        try:
+            potato = int(member["collection"]["POTATO_ITEM"])/300000
+        except:
+            potato = 0
+        try:
+            pumpkin = int(member["collection"]["PUMPKIN"])/90066
+        except:
+            pumpkin = 0
+        try:
+            sugar = int(member["collection"]["SUGAR_CANE"])/200000
+        except:
+            sugar = 0
+        try:
+            wheat = int(member["collection"]["WHEAT"])/100000
+        except:
+            wheat = 0
         total= cactus + carrot + cocoa + melon + wart + potato + pumpkin + sugar + wheat
 
         doubleBreakRatio = (cactus/180356 + sugar/200000) / total
