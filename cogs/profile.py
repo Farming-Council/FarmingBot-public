@@ -188,12 +188,19 @@ class Profile(commands.Cog):
     @app_commands.guild_only()
     async def profile(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
 
-        if ign is None:
-            uuid = await self.bot.get_uuid(interaction.user.display_name)
-            ign = await self.bot.get_ign(uuid)
-        if type(ign) == int or ign == None:
-            ign = interaction.user.display_name
-
+        try:
+            if ign is None:
+                uuid = await self.bot.get_db_info(interaction.user.id)
+                ign = await self.bot.get_ign(uuid)
+            if type(ign) == int or ign == None:
+                ign = interaction.user.display_name
+        except:
+            embed = discord.Embed(title=f"Error",description=f"""{ign} does not exist!""", color=EMBED_COLOR)
+            embed.set_image(url='attachment://image.png')
+            embed.set_footer(text="Made by Farming Council",
+                        icon_url="https://i.imgur.com/4YXjLqq.png")
+            await interaction.response.send_message(embed=embed)
+            return
 
         embed = discord.Embed(title=f"Loading",description=f"""Checking {ign}'s Farming Profile!""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
