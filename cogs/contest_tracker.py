@@ -13,6 +13,7 @@ import sys, os
 import time
 import datetime
 import matplotlib.pyplot as plt
+from cogs.blocked_commands import if_banned
 
 if TYPE_CHECKING:
     from utils import FarmingCouncil
@@ -21,13 +22,13 @@ class contesttracker(commands.Cog):
     def __init__(self, bot: FarmingCouncil):
         self.bot: FarmingCouncil = bot
         self.session: aiohttp.ClientSession | None = None
-
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
-
     @app_commands.command(description="Find Contests in a given time period")
     @app_commands.describe(ign="Hypixel username", profile= "choose the hypixel skyblock profile", time_period="Use the time range ['1 year', '1month', '6days', '2 weeks']")
     async def contests(self, interaction: discord.Interaction, ign: str, profile: str = None, time_period: str = "1 week"):
+        if await if_banned(self, interaction):
+            return
         await self.bot.command_counter(interaction)
         try:
             await interaction.response.send_message("Loading Graph")
@@ -142,7 +143,6 @@ class contesttracker(commands.Cog):
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
-
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(contesttracker(bot))
