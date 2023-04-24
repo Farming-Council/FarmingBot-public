@@ -186,7 +186,7 @@ class Profile(commands.Cog):
 
     @app_commands.command(description="Get a user's farming profile!")
     @app_commands.guild_only()
-    async def profile(self, interaction: discord.Interaction, ign: str = None, profile: str=""):
+    async def profile(self, interaction: discord.Interaction, ign: str, profile: str=""):
 
         try:
             if ign is None:
@@ -552,7 +552,12 @@ async def get_farming_contests(self, member):
             best_contest = contest
 
     best_contest_amount = best_collected
-    best_contest_type = best_contest.split(":")[2]
+
+    if "INK_SACK:3" in best_contest:
+        best_contest_type = "INK_SACK:3"
+    else:
+        best_contest_type = best_contest.split(":")[2]
+
     best_contest_string += f"{COLLECTIONS_DICT[best_contest_type][1]} {COLLECTIONS_DICT[best_contest_type][0]} - **{int(best_contest_amount):,}**\n"
 
     medal_inventory_string += f"""
