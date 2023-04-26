@@ -29,6 +29,7 @@ class contesttracker(commands.Cog):
     @app_commands.command(description="Find Contests in a given time period")
     @app_commands.describe(ign="Hypixel username", profile= "choose the hypixel skyblock profile", time_period="Use the time range ['1 year', '1month', '6days', '2 weeks']")
     async def contests(self, interaction: discord.Interaction, ign: str, profile: str = None, time_period: str = "1 week"):
+        name = time_period
         await self.bot.command_counter(interaction)
         try:
             await interaction.response.send_message("Loading Graph")
@@ -127,13 +128,13 @@ class contesttracker(commands.Cog):
             plt.savefig('image.png', transparent=True)
             image = discord.File("image.png")
             embed = discord.Embed(
-                title="Contests Tracker", description=f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{a}{time_period}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{timecounter}`", color=EMBED_COLOR)
+                title="Contests Tracker", description=f"The chart displays the player's **Jacob Contest's** participation hours in a day (UTC) over the past `{name}`.  This information provides a comprehensive view of when the player `{ign}` was online and participated in the contest during this time period.\nTotal amount of Jacob Contest participations: `{timecounter}`", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by FarmingCouncil",
                             icon_url="https://i.imgur.com/4YXjLqq.png")
             if send == {}:
                 embed = discord.Embed(
-                    title="Contests Tracker", description=f"`{ign}` has not particpated in any **Jacob Contest's** in the past `{time_period}`", color=EMBED_COLOR)
+                    title="Contests Tracker", description=f"`{ign}` has not particpated in any **Jacob Contest's** in the past `{name}`", color=EMBED_COLOR)
                 await interaction.edit_original_response(content="", embed=embed)
             else:
                 await interaction.edit_original_response(content="", embed=embed, attachments=[image])
