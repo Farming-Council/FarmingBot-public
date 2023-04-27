@@ -423,7 +423,7 @@ class FarmingCouncil(commands.Bot):
                 info = await req.json()
             except:
                 raise HypixelIsDown()
-            return info["members"][uuid]
+            return info
     async def calculate_farming_weight(self, uuid):
         # Get profile and player data
         async with self.session.get(f"https://elitebot.dev/api/weight/{uuid}") as req:
