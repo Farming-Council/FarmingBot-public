@@ -11,7 +11,7 @@ bot = FarmingCouncil()
 TEST_TOKEN = str("MTA1NzE2ODU3OTcxMzMxMDgyMQ.GXgQ7N.do1zwgAUZq3QmLyO8uQHepetNl7k7ObYpJx96s")
 if __name__ == "__main__":
     try:
-        bot.run(os.environ.get("TOKEN"))
+        bot.run(TEST_TOKEN)
     except Exception as e:
         print(e)
         exc_type, exc_obj, exc_tb = sys.exc_info()

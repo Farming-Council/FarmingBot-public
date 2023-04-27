@@ -236,18 +236,29 @@ class eval(commands.Cog):
                 "VII": 1500000,"VIII": 5000000, "IX": 20000000, 
                 "X": 100000000
             }
+            
             for hoe in ownedHoes:
                 hoeStats = ownedHoes[hoe]
+                hoeCultivating = 0
                 for item in hoeStats["lore"]:
+                    
                     if "Cultivating" in item:
+                        
                         try:
                             hoeCultivating = int((item.split("§")[2][1:]).replace(",", ""))
                         except:
+                            
                             try:
                                 hoeCultivating = actualROMAN[(item.split(" ")[1])]
                             except:
-                                hoeCUltivating = 0
-                                
+                                hoeCultivating = 0
+                
+                if hoeCultivating == 100000000:
+                    print(hoeStats["lore"])
+                    for item in hoeStats["lore"]:
+                
+                        if "Counter:" in item:
+                            hoeCultivating = item.split(" ")[1][2:].replace(",", "")
                 try:
                     hoeCultivating = int(hoeCultivating)
                 except:
@@ -261,37 +272,48 @@ class eval(commands.Cog):
                         break
                 theoreticalPrice = 3000000
                 baseHoePrice = 3000000
+                
                 try:
                     tier = int(hoe.split("_")[2])
                 except:
+                    
                     try:
                         tier = int(hoe.split("_")[3])
                     except:
                         tier = 1
+                        
                 for crop in FARMING_NAMES:
+                    
                     if hoe in crop:
                         cropName = FARMING_NAMES[crop]
                         break
+                    
                 upgradeCost = await self.bot.hoeTierPrice(f"tier{tier}", cropName, bazaar)
                 baseHoePrice = baseHoePrice +  upgradeCost
+                
                 try:
                     hoeEnchants = ownedHoes[hoe]["attributes"]['enchantments']
                 except KeyError:
                     hoeEnchants = {}
                 enchantCost = 0
+                
                 for enchant in bazaarEnchants:
+                    
                     if enchant in list(dict(hoeEnchants).keys()):
                         if enchant not in ["dedication", "cultivating", "replenish"]:
                             enchantCost += bazaar[f"{bazaarEnchants[enchant]}{hoeEnchants[enchant]}"]["quick_status"]["sellPrice"]
                         else:
                             enchantCost += bazaar[f"{bazaarEnchants[enchant]}"]["quick_status"]["sellPrice"]
+                            
                 enchantedHoePrice = baseHoePrice + enchantCost
                 auctionHoes = (await self.bot.get_past_auction(hoe))
                 averageCultivating = []
+                
                 for auction in auctionHoes:
                     if auction["bin"] == True and str(auction["bids"]) != "null":  
                         price = auction["startingBid"]
                         e = {}
+                        
                         try:
                             enchants = auction['enchantments']
                             for dictionary in enchants:
@@ -300,29 +322,35 @@ class eval(commands.Cog):
                         except KeyError:
                             enchants = {}
                         enchantCost = 0
+                        
                         for enchant in bazaarEnchants:
                             if enchant in list(dict(enchants).keys()):
                                 if enchant not in ["dedication", "cultivating", "replenish"]:
                                     enchantCost += bazaar[f"{bazaarEnchants[enchant]}{enchants[enchant]}"]["quick_status"]["sellPrice"]
                                 else:
                                     enchantCost += bazaar[f"{bazaarEnchants[enchant]}"]["quick_status"]["sellPrice"]
+                                    
                         prices = price - enchantCost - upgradeCost - theoreticalPrice
                         try:
                             auctionHoeCultivating = auction["nbtData"]["data"]["farmed_cultivating"]
                         except:
                             auctionHoeCultivating = 0
+                            
                         try:
                             counterToCoinPrice = auctionHoeCultivating/prices
                             if counterToCoinPrice <= 0:
                                 counterToCoinPrice = 1
                         except:
                             counterToCoinPrice = 1
+                            
                         if counterToCoinPrice > 0:
                             averageCultivating.append(counterToCoinPrice)
+                            
                 try:
                     averagePrice = (sum(averageCultivating) / float(len(averageCultivating)))
                 except:
                     averagePrice = 1
+                    
                 hoeCounterPrice = averagePrice * hoeCultivating
                 finalHoePrice = enchantedHoePrice + hoeCounterPrice
                 
