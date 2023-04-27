@@ -223,7 +223,7 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}&sortOrder={sortOrder}",
+            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}",
             headers={"API-Key": self.API_KEY}
         ) as req:
             try:
@@ -423,7 +423,7 @@ class FarmingCouncil(commands.Bot):
                 info = await req.json()
             except:
                 raise HypixelIsDown()
-            return info
+            return info["members"][uuid]
     async def calculate_farming_weight(self, uuid):
         # Get profile and player data
         async with self.session.get(f"https://elitebot.dev/api/weight/{uuid}") as req:
