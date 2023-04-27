@@ -37,7 +37,7 @@ class contesttracker(commands.Cog):
                 uuid = await self.bot.get_uuid(ign)
                 if profile == None:
                     profile = await self.bot.get_most_recent_profile(uuid)
-                skyblock_data = await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid)
+                skyblock_data =(await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid))["members"][uuid]
             except Exception as e:
                 await interaction.edit_original_response(content="Name Invalid, try another IGN")
                 return
