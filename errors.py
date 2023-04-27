@@ -28,6 +28,7 @@ class InvalidMinecraftUsername(Exception):
         self.username: str = username
         super().__init__(f"Invalid Minecraft username: {username}")
 
+
 class HypixelIsDown(Exception):
     def __init__(self) -> None:
         super().__init__(f"Hypixel is down!")

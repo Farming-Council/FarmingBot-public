@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-import contextlib
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
+
 from utils import EMBED_COLOR
 
-from errors import PlayerNotFoundError, InvalidMinecraftUsername
-
 if TYPE_CHECKING:
-    import aiomysql
     from utils import FarmingCouncil
 
 
@@ -22,7 +19,7 @@ class Suggestion(commands.Cog):
 
     @app_commands.command(description="Suggest something to the FarmingCouncil Staff Team!")
     @app_commands.guild_only()
-    @app_commands.checks.cooldown(3, 86400, key=lambda i: (i.user.id))
+    @app_commands.checks.cooldown(3, 86400, key=lambda i: i.user.id)
     async def suggest(self, interaction: discord.Interaction, suggestion: str):
         channel = self.bot.get_channel(1071503868925575249)
         e = discord.Embed(title="Suggestion", description=f"{suggestion}\n\nSent by: {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})\nFrom server: {interaction.guild.name} ({interaction.guild.id})", color=EMBED_COLOR)
@@ -31,6 +28,7 @@ class Suggestion(commands.Cog):
             await channel.send(embed=e)
         await interaction.response.send_message("Your suggestion has been sent!", ephemeral=True)
         await self.bot.command_counter(interaction)
+
     @suggest.error
     async def suggest_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
@@ -53,6 +51,7 @@ class Suggestion(commands.Cog):
                 ephemeral=True,
             )
         raise error
+
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Suggestion(bot))

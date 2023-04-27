@@ -1,7 +1,8 @@
-import asyncio
 import discord
 from discord.ext import commands, tasks
+
 from utils import FarmingCouncil
+
 
 class Status(commands.Cog):
     def __init__(self, bot):
@@ -35,6 +36,7 @@ class Status(commands.Cog):
         self.status_index += 1
         if self.status_index >= len(self.status_msgs):
             self.status_index = 0
+
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Status(bot))

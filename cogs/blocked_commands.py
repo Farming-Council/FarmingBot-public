@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
@@ -10,25 +10,29 @@ from discord.ext import commands
 if TYPE_CHECKING:
     from utils import FarmingCouncil
 
+
 class Blocked(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
         self.bot: FarmingCouncil = bot
-    async def rps_autocomplete(self,interaction: discord.Interaction,current: str,):
-            commands = [c.name for c in self.bot.commands]
-            return [
-                app_commands.Choice(name=command, value=command)
-                for command in commands if current.lower() in command.lower()
-            ]
+
+    async def rps_autocomplete(self, current: str):
+        cmds = [c.name for c in self.bot.commands]
+        return [
+            app_commands.Choice(name=command, value=command)
+            for command in cmds if current.lower() in command.lower()
+        ]
 
     banned = []
 
     async def if_banned(self, interaction: discord.Interaction):
         if interaction.command.name in self.banned:
-            await interaction.response.send_message("This command is disabled right now, if you think this is a error, please contact staff!", ephemeral=True)
+            await interaction.response.send_message(
+                "This command is disabled right now, if you think this is a error, please contact staff!",
+                ephemeral=True
+            )
             return True
         else:
             return False
-
 
     @app_commands.command(description="Ban a command")
     @app_commands.guild_only()
@@ -44,6 +48,7 @@ class Blocked(commands.Cog):
         else:
             self.banned.append(command)
             return await interaction.response.send_message(f"Blocked {command}!", ephemeral=True)
+
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Blocked(bot))

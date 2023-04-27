@@ -11,6 +11,7 @@ from utils import EMBED_COLOR
 if TYPE_CHECKING:
     from utils import FarmingCouncil
 
+
 class Public(commands.Cog):
     def __init__(self, bot: FarmingCouncil) -> None:
         self.bot: FarmingCouncil = bot

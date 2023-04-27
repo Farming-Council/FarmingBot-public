@@ -18,5 +18,5 @@ if __name__ == "__main__":
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
     # MTA1NzE2ODU3OTcxMzMxMDgyMQ.GXgQ7N.do1zwgAUZq3QmLyO8uQHepetNl7k7ObYpJx96s
-    #os.environ.get("TOKEN")
-    #switch out these two to test the bot, make sure to replace, + do a.env -> .env and back when done!
+    # os.environ.get("TOKEN")
+    # switch out these two to test the bot, make sure to replace, + do .env -> .env and back when done!

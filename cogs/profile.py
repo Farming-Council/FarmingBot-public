@@ -6,11 +6,9 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord import Button, ButtonStyle
-import aiohttp
-import datetime
-import time
+
 from utils import FARMING_ITEMS, EMBED_COLOR
+
 if TYPE_CHECKING:
     from utils import FarmingCouncil
 
@@ -34,7 +32,7 @@ COLLECTIONS_DICT = {
 }
 
 TOOL_EMOJIS = {
-    "COCO_CHOPPER": "<:coco_chopper:1099036047763066880>", 
+    "COCO_CHOPPER": "<:coco_chopper:1099036047763066880>",
     "MELON_DICER": "<:melon_dicer:1099036046366359576>",
     "MELON_DICER_2": "<:melon_dicer:1099036046366359576>",
     "MELON_DICER_3": "<:melon_dicer:1099036046366359576>",
@@ -62,8 +60,12 @@ TOOL_EMOJIS = {
 
 IRONMAN_EMOJI = "<:ironman:1099050581454246000>"
 
+
 class MyView(discord.ui.View):
-    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals, ironman):
+    def __init__(self, bot: FarmingCouncil, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level,
+                 farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name,
+                 highest_collection_amount, skyblock_level, last_10_contests, best_contest, medal_inventory,
+                 unique_golds, total_number_of_contests, total_medals, ironman):
         self.bot: FarmingCouncil = bot
         self.ign = ign
         self.profile = profile
@@ -95,7 +97,7 @@ class MyView(discord.ui.View):
                         value=f"{self.farming_level}",
                         inline=True)
 
-        if(self.farming_xp_to_next_level == "MAX"):
+        if self.farming_xp_to_next_level == "MAX":
             embed.add_field(name="XP to Next Level",
                             value=f"{self.farming_xp_to_next_level}",
                             inline=True)
@@ -123,8 +125,9 @@ class MyView(discord.ui.View):
 
     @discord.ui.button(label="Collections", style=discord.ButtonStyle.green)
     async def collections(self, interaction, button):
-        embed = discord.Embed(title=f"{self.ign}'s Collections ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
-                              color=EMBED_COLOR)
+        embed = discord.Embed(
+            title=f"{self.ign}'s Collections ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
+            color=EMBED_COLOR)
 
         embed.add_field(name="Collections",
                         value=f"{self.farming_collections}",
@@ -156,7 +159,7 @@ class MyView(discord.ui.View):
     @discord.ui.button(label="Contests", style=discord.ButtonStyle.green)
     async def contests(self, interaction, button):
         embed = discord.Embed(title=f"{self.ign}'s Contests ({self.profile}{self.ironman}) - Lvl {self.skyblock_level}",
-                                color=EMBED_COLOR)
+                              color=EMBED_COLOR)
 
         embed.add_field(name="Last 10 Contests",
                         value=f"{self.last_10_contests}",
@@ -169,13 +172,13 @@ class MyView(discord.ui.View):
         embed.add_field(name="Medals (Owned/Total)",
                         value=f"{self.medal_inventory}",
                         inline=True)
-        
+
         embed.add_field(name="Total Contest Stats",
                         value=f"Best Contest: {self.best_contest}Total Contests: **{self.total_number_of_contests}**\nTotal Medals: **{self.total_medals}**",
                         inline=True)
 
         embed.set_footer(text="Made by Farming Council",
-                        icon_url="https://i.imgur.com/4YXjLqq.png")
+                         icon_url="https://i.imgur.com/4YXjLqq.png")
 
         await interaction.response.edit_message(embed=embed, view=self)
 
@@ -186,35 +189,35 @@ class Profile(commands.Cog):
 
     @app_commands.command(description="Get a user's farming profile!")
     @app_commands.guild_only()
-    async def profile(self, interaction: discord.Interaction, ign: str, profile: str=""):
+    async def profile(self, interaction: discord.Interaction, ign: str, profile: str = ""):
 
         try:
             if ign is None:
                 uuid = await self.bot.get_db_info(interaction.user.id)
                 ign = await self.bot.get_ign(uuid)
-            if type(ign) == int or ign == None:
+            if type(ign) == int or ign is None:
                 ign = interaction.user.display_name
         except:
-            embed = discord.Embed(title=f"Error",description=f"""{ign} does not exist!""", color=EMBED_COLOR)
+            embed = discord.Embed(title=f"Error", description=f"""{ign} does not exist!""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
-                        icon_url="https://i.imgur.com/4YXjLqq.png")
+                             icon_url="https://i.imgur.com/4YXjLqq.png")
             await interaction.response.send_message(embed=embed)
             return
 
-        embed = discord.Embed(title=f"Loading",description=f"""Checking {ign}'s Farming Profile!""", color=EMBED_COLOR)
+        embed = discord.Embed(title=f"Loading", description=f"""Checking {ign}'s Farming Profile!""", color=EMBED_COLOR)
         embed.set_image(url='attachment://image.png')
-        embed.set_footer(text="Made By Farming Council", 
-                    icon_url="https://i.imgur.com/4YXjLqq.png")
+        embed.set_footer(text="Made By Farming Council",
+                         icon_url="https://i.imgur.com/4YXjLqq.png")
         await interaction.response.send_message(embed=embed)
-        
+
         try:
             uuid = await self.bot.get_uuid(ign)
         except:
-            embed = discord.Embed(title=f"Error",description=f"""{ign} does not exist!""", color=EMBED_COLOR)
+            embed = discord.Embed(title=f"Error", description=f"""{ign} does not exist!""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
-                        icon_url="https://i.imgur.com/4YXjLqq.png")
+                             icon_url="https://i.imgur.com/4YXjLqq.png")
             await interaction.edit_original_response(embed=embed)
             return
 
@@ -230,24 +233,27 @@ class Profile(commands.Cog):
             gamemode = skyblock_data["game_mode"]
         except:
             if profile == 0:
-                embed = discord.Embed(title=f"Error",description=f"""{ign} does not have a profile!""", color=EMBED_COLOR)
+                embed = discord.Embed(title=f"Error", description=f"""{ign} does not have a profile!""",
+                                      color=EMBED_COLOR)
             else:
-                embed = discord.Embed(title=f"Error",description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please open a support ticket.""", color=EMBED_COLOR)
+                embed = discord.Embed(title=f"Error",
+                                      description=f"""{profile} is not a valid profile for {ign}!\nIf you think this is an error, please open a support ticket.""",
+                                      color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
-                        icon_url="https://i.imgur.com/4YXjLqq.png")
+                             icon_url="https://i.imgur.com/4YXjLqq.png")
             await interaction.edit_original_response(embed=embed)
             return
 
         farming_stats = await get_farming_stats(self.bot, skyblock_data, uuid)
         if farming_stats[0] == 0:
-            embed = discord.Embed(title=f"Error",description=f"""{farming_stats[1]}""", color=EMBED_COLOR)
+            embed = discord.Embed(title=f"Error", description=f"""{farming_stats[1]}""", color=EMBED_COLOR)
             embed.set_image(url='attachment://image.png')
             embed.set_footer(text="Made by Farming Council",
-                        icon_url="https://i.imgur.com/4YXjLqq.png")
+                             icon_url="https://i.imgur.com/4YXjLqq.png")
             await interaction.edit_original_response(embed=embed)
             return
-        
+
         farming_stats = farming_stats[1]
         farming_level = farming_stats["farming_level"]
         farming_level_xp = farming_stats["farming_level_xp"]
@@ -264,7 +270,7 @@ class Profile(commands.Cog):
         farming_weight = farming_stats["farming_weight"]
         highest_collection_name = farming_stats["highest_collection_name"]
         highest_collection_amount = f"{int(farming_stats['highest_collection_amount']):,}"
-        skyblock_level =  farming_stats["skyblock_level"]
+        skyblock_level = farming_stats["skyblock_level"]
         last_10_contests = farming_stats["last_10_contests"]
         best_contest = farming_stats["best_contest"]
         medal_inventory = farming_stats["medal_inventory"]
@@ -276,7 +282,7 @@ class Profile(commands.Cog):
         ironman_string = ""
         if gamemode == "ironman":
             is_ironman = True
-        
+
         if is_ironman:
             ironman_string += f" {IRONMAN_EMOJI}"
 
@@ -286,8 +292,8 @@ class Profile(commands.Cog):
         embed.add_field(name="Farming Level",
                         value=f"{farming_level}",
                         inline=True)
-        
-        if(farming_xp_to_next_level == "MAX"):
+
+        if (farming_xp_to_next_level == "MAX"):
             embed.add_field(name="XP to Next Level",
                             value=f"{farming_xp_to_next_level}",
                             inline=True)
@@ -309,16 +315,20 @@ class Profile(commands.Cog):
                         inline=True)
 
         embed.set_footer(text="Made by Farming Council - Weight by Elite Bot",
-                 icon_url="https://i.imgur.com/4YXjLqq.png")
+                         icon_url="https://i.imgur.com/4YXjLqq.png")
 
-        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level, farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name, highest_collection_amount, skyblock_level, last_10_contests,best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals, ironman_string)
+        view = MyView(self.bot, ign, profile, farming_level, farming_total_xp, farming_xp_to_next_level,
+                      farming_collections, farming_minions, farming_tools, farming_weight, highest_collection_name,
+                      highest_collection_amount, skyblock_level, last_10_contests, best_contest, medal_inventory,
+                      unique_golds, total_number_of_contests, total_medals, ironman_string)
         await self.bot.command_counter(interaction)
         await interaction.edit_original_response(embed=embed, view=view)
+
 
 async def get_farming_stats(self, skyblock_data, uuid):
     try:
         error = skyblock_data["error"]
-        return [0,error]
+        return [0, error]
     except:
         pass
     try:
@@ -349,7 +359,8 @@ async def get_farming_stats(self, skyblock_data, uuid):
         except:
             farming_total_xp = 0
         try:
-            farming_xp_to_next_level = int(member["skills"]["farming"]["xpForNext"]) - int(member["skills"]["farming"]["xpCurrent"])
+            farming_xp_to_next_level = int(member["skills"]["farming"]["xpForNext"]) - int(
+                member["skills"]["farming"]["xpCurrent"])
         except:
             farming_xp_to_next_level = 0
 
@@ -357,7 +368,8 @@ async def get_farming_stats(self, skyblock_data, uuid):
         farming_tools = await get_farming_tools(self, member)
 
         # Farming Collections
-        farming_collections, highest_collection_name, highest_collection_amount = await get_farming_collections(self, member)
+        farming_collections, highest_collection_name, highest_collection_amount = await get_farming_collections(self,
+                                                                                                                member)
 
         # Farming Minions
         farming_minions = await get_farming_minions(self, skyblock_data)
@@ -367,8 +379,9 @@ async def get_farming_stats(self, skyblock_data, uuid):
         farming_weight = farming_weight[1]
         farming_weight = round(farming_weight["total"], 2)
         skyblock_level = int(member["leveling"]["experience"] / 100)
-        last_10_contests, best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals = await get_farming_contests(self, member)
-        
+        last_10_contests, best_contest, medal_inventory, unique_golds, total_number_of_contests, total_medals = await get_farming_contests(
+            self, member)
+
         return [1, {
             "farming_level": farming_level,
             "farming_level_xp": farming_level_xp,
@@ -377,19 +390,20 @@ async def get_farming_stats(self, skyblock_data, uuid):
             "farming_tools": farming_tools,
             "farming_collections": farming_collections,
             "highest_collection_name": highest_collection_name,
-            "highest_collection_amount": highest_collection_amount, 
-            "farming_minions": farming_minions, 
-            "farming_weight": farming_weight, 
+            "highest_collection_amount": highest_collection_amount,
+            "farming_minions": farming_minions,
+            "farming_weight": farming_weight,
             "skyblock_level": skyblock_level,
             "last_10_contests": last_10_contests,
-            "best_contest": best_contest, 
+            "best_contest": best_contest,
             "medal_inventory": medal_inventory,
             "unique_golds": unique_golds,
             "total_number_of_contests": total_number_of_contests,
             "total_medals": total_medals
-            }]
+        }]
     else:
         return [0, "Error: No player found. Please try again later or open a support ticket."]
+
 
 async def get_farming_collections(self, member):
     collections = member["collection"]
@@ -451,13 +465,15 @@ async def get_farming_tools(self, member):
             tools_string += f"{tool}\n"
         return tools_string
 
+
 async def get_farming_minions(self, json):
     unlocked_minions = json["unlocked_minions"]
     if unlocked_minions == None:
         return "Error obtaining farming minions\n"
-    
+
     minions_string = ""
-    minion_types = ["WHEAT", "CARROT", "POTATO", "MELON", "PUMPKIN", "COCOA", "SUGAR_CANE", "CACTUS", "MUSHROOM", "NETHER_WARTS"]
+    minion_types = ["WHEAT", "CARROT", "POTATO", "MELON", "PUMPKIN", "COCOA", "SUGAR_CANE", "CACTUS", "MUSHROOM",
+                    "NETHER_WARTS"]
     minion_levels = {}
     for minion_type in minion_types:
         try:
@@ -479,6 +495,7 @@ async def get_farming_minions(self, json):
     """
 
     return minions_string
+
 
 async def get_farming_contests(self, member):
     jacob_contents = member["jacob2"]
@@ -537,7 +554,7 @@ async def get_farming_contests(self, member):
                 total_silver_medals += 1
             elif position <= participants * 0.6 + 1:
                 total_bronze_medals += 1
-    
+
     total_medals = total_gold_medals + total_silver_medals + total_bronze_medals
 
     contest_names = sorted(contests.keys(), reverse=True)
@@ -565,10 +582,8 @@ async def get_farming_contests(self, member):
     except:
         unique_golds_string = "No Unique Golds\n"
 
-    
     best_collected = 0
     best_contest = ""
-
 
     for contest, data in contests.items():
         if data["collected"] > best_collected:
@@ -592,27 +607,28 @@ async def get_farming_contests(self, member):
 
     return last_10_contests_string, best_contest_string, medal_inventory_string, unique_golds_string, total_number_of_contests, total_medals
 
+
 async def get_farming_weight(self, member, json):
     weight = 0
-    if member:   
+    if member:
         try:
             farming_level = int(member["skills"]["farming"]["level"])
         except:
             farming_level = 0
         try:
-            cactus = int(member["collection"]["CACTUS"])/177254
+            cactus = int(member["collection"]["CACTUS"]) / 177254
         except:
             cactus = 0
         try:
-            carrot = int(member["collection"]["CARROT_ITEM"])/300000
+            carrot = int(member["collection"]["CARROT_ITEM"]) / 300000
         except:
             carrot = 0
         try:
-            cocoa = int(member["collection"]["INK_SACK:3"])/267174
+            cocoa = int(member["collection"]["INK_SACK:3"]) / 267174
         except:
             cocoa = 0
         try:
-            melon = int(member["collection"]["MELON"])/450325
+            melon = int(member["collection"]["MELON"]) / 450325
         except:
             melon = 0
         try:
@@ -620,31 +636,31 @@ async def get_farming_weight(self, member, json):
         except:
             mushroom = 0
         try:
-            wart = int(member["collection"]["NETHER_STALK"])/250000
+            wart = int(member["collection"]["NETHER_STALK"]) / 250000
         except:
             wart = 0
         try:
-            potato = int(member["collection"]["POTATO_ITEM"])/300000
+            potato = int(member["collection"]["POTATO_ITEM"]) / 300000
         except:
             potato = 0
         try:
-            pumpkin = int(member["collection"]["PUMPKIN"])/90066
+            pumpkin = int(member["collection"]["PUMPKIN"]) / 90066
         except:
             pumpkin = 0
         try:
-            sugar = int(member["collection"]["SUGAR_CANE"])/200000
+            sugar = int(member["collection"]["SUGAR_CANE"]) / 200000
         except:
             sugar = 0
         try:
-            wheat = int(member["collection"]["WHEAT"])/100000
+            wheat = int(member["collection"]["WHEAT"]) / 100000
         except:
             wheat = 0
-        total= cactus + carrot + cocoa + melon + wart + potato + pumpkin + sugar + wheat
+        total = cactus + carrot + cocoa + melon + wart + potato + pumpkin + sugar + wheat
 
-        doubleBreakRatio = (cactus/180356 + sugar/200000) / total
-        normalRatio = (total - cactus/90178 - sugar/200000) / total
+        doubleBreakRatio = (cactus / 180356 + sugar / 200000) / total
+        normalRatio = (total - cactus / 90178 - sugar / 200000) / total
         mushroomWeight = doubleBreakRatio * (mushroom / (2 * 180356)) + normalRatio * (mushroom / 90178)
-        weight +=mushroomWeight
+        weight += mushroomWeight
         weight += total
 
         farming_weight = 0
@@ -655,21 +671,22 @@ async def get_farming_weight(self, member, json):
         elif farming_level >= 50:
             weight += 100
             farming_weight += 100
-        
+
         minion_weight = 0
-        minions= []
+        minions = []
         for i in json["unlocked_minions"]:
-            if i in ["CACTUS","CARROT","COCOA","MELON","MUSHROOM","NETHER_WARTS","POTATO","PUMPKIN","SUGAR_CANE","WHEAT"]:
+            if i in ["CACTUS", "CARROT", "COCOA", "MELON", "MUSHROOM", "NETHER_WARTS", "POTATO", "PUMPKIN",
+                     "SUGAR_CANE", "WHEAT"]:
                 if json["unlocked_minions"][i] == 12:
-                    weight+=5
-                    minion_weight+=5
+                    weight += 5
+                    minion_weight += 5
                     minions.append(i)
-        jacub_weight = 0
-        jacub_perks = 0
+        jacob_weight = 0
+        jacob_perks = 0
         try:
-            weight += member["jacob2"]["perks"]["double_drops"]*2
-            jacub_weight+=member["jacob2"]["perks"]["double_drops"]*2
-            jacub_perks+=member["jacob2"]["perks"]["double_drops"]
+            weight += member["jacob2"]["perks"]["double_drops"] * 2
+            jacob_weight += member["jacob2"]["perks"]["double_drops"] * 2
+            jacob_perks += member["jacob2"]["perks"]["double_drops"]
 
         except:
             pass
@@ -679,24 +696,33 @@ async def get_farming_weight(self, member, json):
         for i in member["jacob2"]["contests"]:
             try:
                 if member["jacob2"]["contests"][i]["claimed_medal"] == "gold":
-                    gold+=1
+                    gold += 1
             except:
                 try:
-                    if member["jacob2"]["contests"][i]["claimed_position"]<=member["jacob2"]["contests"][i]["claimed_participants"] * 0.05 + 1:
-                        gold+=1
+                    if member["jacob2"]["contests"][i]["claimed_position"] <= member["jacob2"]["contests"][i]["claimed_participants"] * 0.05 + 1:
+                        gold += 1
                 except:
                     pass
                 pass
-        if gold >=1000:
+        if gold >= 1000:
             weight += 500
             gold_weight += 500
         else:
             gold = 50 * round(gold / 50)
-            gold_weight += gold / 50 *25
-        
-        return [1,{"total":weight,"collection_total":{"total":total+mushroomWeight,"cactus":cactus,"carrot":carrot,"cocoa":cocoa,"melon":melon,"wart":wart,"potato":potato,"pumpkin":pumpkin,"sugar":sugar,"wheat":wheat,"mushroom":mushroomWeight},"farming_weight":{"farming_weight":farming_weight,"farming_level":farming_level},"minions":{"minion_weight":minion_weight,"minions":minions},"jacub":{"jacub_weight":jacub_weight,"jacub_perks":jacub_perks},"gold":{"golds":gold,"gold_weight":gold_weight}}]
+            gold_weight += gold / 50 * 25
+
+        return [1, {"total": weight,
+                    "collection_total": {"total": total + mushroomWeight, "cactus": cactus, "carrot": carrot,
+                                         "cocoa": cocoa, "melon": melon, "wart": wart, "potato": potato,
+                                         "pumpkin": pumpkin, "sugar": sugar, "wheat": wheat,
+                                         "mushroom": mushroomWeight},
+                    "farming_weight": {"farming_weight": farming_weight, "farming_level": farming_level},
+                    "minions": {"minion_weight": minion_weight, "minions": minions},
+                    "jacob": {"jacob_weight": jacob_weight, "jacob_perks": jacob_perks},
+                    "gold": {"golds": gold, "gold_weight": gold_weight}}]
     else:
-        return [0,"Error: No player found. Please try again later or contact the developer at CosmicCrow#6355."]
+        return [0, "Error: No player found. Please try again later or contact the developer at CosmicCrow#6355."]
+
 
 async def setup(bot: FarmingCouncil) -> None:
     await bot.add_cog(Profile(bot))

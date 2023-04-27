@@ -32,7 +32,7 @@ class users(commands.Cog):
             return
         if message.channel.id == 1060834422179495946:
             await message.delete()
-        
+
     @app_commands.command(description="Unlink your in-game hypixel account")
     @app_commands.guild_only()
     async def unlink(self, interaction: discord.Interaction):
@@ -62,10 +62,8 @@ class users(commands.Cog):
                 embed = discord.Embed(title="\U0000274c Failed", description="There was an issue while unverifying, please contact a staff member.", color=discord.Colour.red())
                 return await interaction.followup.send(embed=embed, ephemeral=True)
         embed = discord.Embed(title="Success", description="You have successfully unlinked your account. To re-link run </link:1082814958871527566>.", color=EMBED_COLOR)
-        
+
         await interaction.followup.send(embed=embed, ephemeral=True)
-
-
 
     @app_commands.command(description="Link your in-game hypixel account")
     @app_commands.guild_only()
@@ -118,7 +116,7 @@ class users(commands.Cog):
                     color=discord.Colour.red()
                 )
             )
-        
+
         async with self.bot.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:

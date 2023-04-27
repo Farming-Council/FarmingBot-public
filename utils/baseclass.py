@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import os
 import pkgutil
-
-from typing import Any, ClassVar
+import time
+from typing import ClassVar
 
 import aiohttp
 import aiomysql
-import os
-from dotenv import load_dotenv
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
 
-from errors import InvalidMinecraftUsername, PlayerNotFoundError, ProfileNotFoundError, HypixelIsDown
 from _types import HypixelPlayer, HypixelSocialMedia
-import time
+from errors import InvalidMinecraftUsername, PlayerNotFoundError, ProfileNotFoundError, HypixelIsDown
 
 load_dotenv()
 
+
 class FarmingCouncil(commands.Bot):
     API_KEY: ClassVar[str] = os.environ.get("hypixel_api_key")
+
     def __init__(self) -> None:
-        super().__init__(command_prefix="!", intents=discord.Intents.default(), help_command=None, owner_id=702385226407608341)
+        super().__init__(command_prefix="!", intents=discord.Intents.default(), help_command=None,
+                         owner_id=702385226407608341)
         self.session: aiohttp.ClientSession | None = None
         self.pool: aiomysql.Pool = None  # type: ignore
 
@@ -43,7 +45,7 @@ class FarmingCouncil(commands.Bot):
             raise exception
 
     async def setup_hook(self) -> None:
-        #await self.load_extension("cogs.rent_calc")
+        # await self.load_extension("cogs.rent_calc")
         self.session = aiohttp.ClientSession()
         self.pool = await aiomysql.create_pool(
             host=os.environ.get("DATABASE_HOST"),
@@ -51,7 +53,7 @@ class FarmingCouncil(commands.Bot):
             password=os.environ.get("DB_PASSWORD"),
             db=os.environ.get("DB_NAME"),
             loop=self.loop,
-            port = 32813
+            port=32813
         )
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
@@ -80,12 +82,11 @@ class FarmingCouncil(commands.Bot):
                 )
                 await conn.commit()
 
-
         for cog in pkgutil.iter_modules(["cogs"], prefix="cogs."):
             await self.load_extension(cog.name)
 
     async def on_ready(self) -> None:
-        #await self.tree.sync()
+        # await self.tree.sync()
         await self.tree.sync()
         print(f"Logged in as {self.user} ({self.user.id})")  # type: ignore
 
@@ -96,7 +97,8 @@ class FarmingCouncil(commands.Bot):
             self.pool.close()
             await self.pool.wait_closed()
         await super().close()
-    async def get_crop(self,cropname):
+
+    async def get_crop(self, cropname):
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
@@ -105,21 +107,19 @@ class FarmingCouncil(commands.Bot):
                 data = await cursor.fetchone()
         return data
 
-
-    async def command_counter(self,interaction: discord.Interaction):
+    async def command_counter(self, interaction: discord.Interaction):
         try:
-            name  = str(interaction.command.name)
+            name = str(interaction.command.name)
         except:
             name = "None"
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
                 cursor: aiomysql.Cursor
-                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id, timestamp) VALUES (%s, %s, %s)", (name, int(interaction.user.id), int(time.time())))
+                await cursor.execute("INSERT INTO commandcounter (cmd_name, user_id, timestamp) VALUES (%s, %s, %s)",
+                                     (name, int(interaction.user.id), int(time.time())))
                 await conn.commit()
-                
-                
-                
+
     async def get_commands(self):
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
@@ -128,8 +128,6 @@ class FarmingCouncil(commands.Bot):
                 await cursor.execute("select * from commandcounter")
                 commands = await cursor.fetchall()
         return commands
-
-
 
     async def get_uuid(self, username: str) -> str:
         if self.session is None:
@@ -157,14 +155,12 @@ class FarmingCouncil(commands.Bot):
             except KeyError:
                 return None
 
-
-
     async def get_hypixel_player(self, uuid: str) -> HypixelPlayer:
 
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/players/{uuid}?key={self.API_KEY}"
+                f"https://api.slothpixel.me/api/players/{uuid}?key={self.API_KEY}"
         ) as req:
             info = await req.json()
             if req.status != 200:
@@ -176,14 +172,12 @@ class FarmingCouncil(commands.Bot):
                 social_media=social_media
             )
 
-
-
     async def get_skyblock_data(self, uuid: str, profile: str | None) -> HypixelPlayer:
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.hypixel.net/skyblock/profiles?uuid={uuid}",
-            headers={"API-Key": self.API_KEY}
+                f"https://api.hypixel.net/skyblock/profiles?uuid={uuid}",
+                headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
@@ -216,54 +210,46 @@ class FarmingCouncil(commands.Bot):
                 i += 1
 
             return profiles[latest_profile_index]
-        
-        
-        
-    async def get_auction(self, id:str, sortOrder="asc"):
+
+    async def get_auction(self, id: str, sortOrder="asc"):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}&sortOrder={sortOrder}",
-            headers={"API-Key": self.API_KEY}
+                f"https://api.slothpixel.me/api/skyblock/auctions?id={id}&sortOrder={sortOrder}",
+                headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
             except:
                 raise HypixelIsDown()
             return info
-        
-        
-        
-    async def get_past_auction(self, id:str):
+
+    async def get_past_auction(self, id: str):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://sky.coflnet.com/api/auctions/tag/{id}/sold?page=0&pageSize=100",
-            headers={"API-Key": self.API_KEY}
+                f"https://sky.coflnet.com/api/auctions/tag/{id}/sold?page=0&pageSize=100",
+                headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
             except:
                 raise HypixelIsDown()
             return info
-        
-        
-        
+
     async def get_bazzar_data(self):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/bazaar",
-            headers={"API-Key": self.API_KEY}
+                f"https://api.slothpixel.me/api/skyblock/bazaar",
+                headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
             except:
                 raise HypixelIsDown()
             return info
-        
-        
-        
+
     async def hoeTierPrice(self, tier, cropType, bazaar):
         typeHoe = {
             "WHEAT": {
@@ -348,18 +334,18 @@ class FarmingCouncil(commands.Bot):
             },
             "COCO": {
                 "tier1": {
-            
+
                 },
                 "tier2": {
-                    
+
                 },
                 "tier3": {
-                    
+
                 }
             },
             "MELON": {
                 "tier1": {
-            
+
                 },
                 "tier2": {
                     "ENCHANTED_MELON_BLOCK": 64
@@ -370,7 +356,7 @@ class FarmingCouncil(commands.Bot):
             },
             "PUMPKIN": {
                 "tier1": {
-            
+
                 },
                 "tier2": {
                     "POLISHED_PUMPKIN": 16
@@ -381,24 +367,24 @@ class FarmingCouncil(commands.Bot):
             },
             "MUSHROOMS": {
                 "tier1": {
-            
+
                 },
                 "tier2": {
-                    
+
                 },
                 "tier3": {
-                    
+
                 }
             },
             "CACTUS": {
                 "tier1": {
-            
+
                 },
                 "tier2": {
-                    
+
                 },
                 "tier3": {
-                    
+
                 }
             }
         }
@@ -407,7 +393,7 @@ class FarmingCouncil(commands.Bot):
         for item in cost:
             upgradeCost += bazaar[item]["quick_status"]["sellPrice"] * cost[item]
         return upgradeCost
-            
+
     async def get_skyblock_data_SLOTHPIXEL(self, ign: str, profile: str | None, uuid: str) -> HypixelPlayer:
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
@@ -416,28 +402,29 @@ class FarmingCouncil(commands.Bot):
         else:
             url = f"https://api.slothpixel.me/api/skyblock/profile/{ign}/{profile}"
         async with self.session.get(
-            f"{url}",
-            headers={"API-Key": self.API_KEY}
+                f"{url}",
+                headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
             except:
                 raise HypixelIsDown()
             return info
+
     async def calculate_farming_weight(self, uuid):
         # Get profile and player data
         async with self.session.get(f"https://elitebot.dev/api/weight/{uuid}") as req:
             try:
                 response = await req.json()
             except Exception as e:
-                return [0,"Hypixel is down"]
+                return [0, "Hypixel is down"]
         return response['highest']['farming']['weight']
-        
+
     async def get_most_recent_profile(self, uuid):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/profile/{uuid}?key={self.API_KEY}"
+                f"https://api.slothpixel.me/api/skyblock/profile/{uuid}?key={self.API_KEY}"
         ) as req:
             try:
                 info = await req.json()
@@ -450,9 +437,9 @@ class FarmingCouncil(commands.Bot):
             if not info:
                 raise PlayerNotFoundError(uuid=uuid)
 
-            return(info["cute_name"])
-        
-    async def get_db_info(self,discord_id):
+            return info["cute_name"]
+
+    async def get_db_info(self, discord_id):
         """Returns the uuid of a user from discord iffrom the database"""
         async with self.pool.acquire() as conn:
             conn: aiomysql.Connection
