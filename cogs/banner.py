@@ -37,14 +37,17 @@ class Banner(commands.Cog):
         # Create drawing context
         draw = ImageDraw.Draw(image) # image is 960x640
         # Load font
-        font = ImageFont.truetype("Roboto-Bold.ttf", size=52)
+        font = ImageFont.truetype("Uni Sans Heavy.otf", size=52)
 
-        # light gray rectangle in bottom right corner, high opacity
-        draw.rectangle([(800, 500), (960, 640)], fill=(0, 0, 0, 200))
-
+        # light gray rectangle in bottom right corner, high opacity, rounded top left corner
+        # draw.rectangle([(700, 475), (960, 640)], fill=(0, 0, 0))
+        # draw.rounded_rectangle([(700, 475), (960, 640)], radius=20, fill=(0, 0, 0))
         draw.text((780, 570), f"{guild.approximate_member_count}", font=font, fill=(255, 255, 255), anchor="lt")
-        draw.text((780, 500), f"{guild.approximate_presence_count}", font=font, fill=(255, 255, 255), anchor="lt")
-        # draw two circles, one for online, one for total
+        draw.text((780, 500), f"{guild.approximate_presence_count}", font=font, fill=(255, 255, 255), anchor="lt", stroke_width=5, stroke_fill=(0, 0, 0))
+        # draw circle directly to the left of the first text, fill gray
+        draw.ellipse([(720, 563), (770, 613)], fill=(128, 132, 142))
+        # draw circle directly to the left of the second text, fill green
+        draw.ellipse([(720, 493), (770, 543)], fill=(67, 181, 129))
         # Save image (this is just for testing)
         image.save("agony.png")
         print("Image saved to disk!")
