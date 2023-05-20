@@ -46,7 +46,7 @@ class FarmingCouncil(commands.Bot):
         #await self.load_extension("cogs.rent_calc")
         self.session = aiohttp.ClientSession()
         self.pool = await aiomysql.create_pool(
-            host="89.117.20.216"),
+            host="89.117.20.216",
             user=os.environ.get("DB_USERNAME"),
             password=os.environ.get("DB_PASSWORD"),
             db=os.environ.get("DB_NAME"),
