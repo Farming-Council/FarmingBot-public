@@ -356,25 +356,25 @@ class eval(commands.Cog):
                 
                 name = hoeStats['name'][2:]
                 if "sugar" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:sugar_cane:1042829849456287854>")) +" "+ name
+                    name = "<:sugar_cane:1042829849456287854> " + name
                 elif "carrot" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:carrot:1042829823741001798>")) +" "+ name
+                    name = "<:carrot:1042829823741001798> " + name
                 elif "wart" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:NetherWarts:1042829838655959050>")) +" "+ name
+                    name = "<:NetherWarts:1042829838655959050> " + name
                 elif "fungi" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:mushroom:1042829836894339072>")) +" "+ name
+                    name = "<:mushroom:1042829836894339072> " + name
                 elif "wheat" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:Wheat:1042829818133217300>")) +" "+ name
+                    name = "<:Wheat:1042829818133217300> " + name
                 elif "potato" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:potato:1042829840140750848>")) +" "+ name
+                    name = "<:potato:1042829840140750848> " + name
                 elif "melon" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:Melon:1042829832939126854>")) +" "+ name
+                    name = "<:Melon:1042829832939126854> " + name
                 elif "pumpkin" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:Pumpkin:1042829845203255357>")) +" "+ name
+                    name = "<:Pumpkin:1042829845203255357> " + name
                 elif "coco" in name.lower():                
-                    name = str(discord.PartialEmoji.from_str("<:CocoaBeans:1042829825141919827>")) +" "+ name
+                    name = "<:CocoaBeans:1042829825141919827> " + name
                 elif "cactus" in name.lower():
-                    name = str(discord.PartialEmoji.from_str("<:Cactus:1042829821971025951>")) +" "+ name
+                    name = "<:Cactus:1042829821971025951> " + name
                 try:
                     send.append([name, f"Cultivating: **{hoeCultivating:,}**\nPrice: **{round(enchantedHoePrice, 2):,}**"])
                 except:
