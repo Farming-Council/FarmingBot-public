@@ -356,25 +356,25 @@ class eval(commands.Cog):
                 
                 name = hoeStats['name'][2:]
                 if "sugar" in name.lower():                
-                    name = "<:sugar_cane:1042829849456287854> " + name
+                    name = "<:SugarCane:1112740234422136892> " + name
                 elif "carrot" in name.lower():                
-                    name = "<:carrot:1042829823741001798> " + name
+                    name = "<:Carrot:1112740251371323493> " + name
                 elif "wart" in name.lower():                
-                    name = "<:NetherWarts:1042829838655959050> " + name
+                    name = "<:NetherWart:1112740241732817028> " + name
                 elif "fungi" in name.lower():                
-                    name = "<:mushroom:1042829836894339072> " + name
+                    name = "<:Mushroom:1112740243527966721> " + name
                 elif "wheat" in name.lower():                
-                    name = "<:Wheat:1042829818133217300> " + name
+                    name = "<:Wheat:1112740232278847570> " + name
                 elif "potato" in name.lower():                
-                    name = "<:potato:1042829840140750848> " + name
+                    name = "<:Potato:1112740239300116530> " + name
                 elif "melon" in name.lower():                
-                    name = "<:Melon:1042829832939126854> " + name
+                    name = "<:Melon:1112740247017623592> " + name
                 elif "pumpkin" in name.lower():                
-                    name = "<:Pumpkin:1042829845203255357> " + name
+                    name = "<:Pumpkin:1112740237605609513> " + name
                 elif "coco" in name.lower():                
-                    name = "<:CocoaBeans:1042829825141919827> " + name
+                    name = "<:CocoaBean:1112740248833765456> " + name
                 elif "cactus" in name.lower():
-                    name = "<:Cactus:1042829821971025951> " + name
+                    name = "<:Cactus:1112755808804024340> " + name
                 try:
                     send.append([name, f"Cultivating: **{hoeCultivating:,}**\nPrice: **{round(enchantedHoePrice, 2):,}**"])
                 except:

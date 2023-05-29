@@ -21,16 +21,16 @@ MEDAL_EMOJIS = {
 }
 
 COLLECTIONS_DICT = {
-    "WHEAT": ["Wheat", "<:Wheat:1042829818133217300>"],
-    "CARROT_ITEM": ["Carrot", "<:carrot:1042829823741001798>"],
-    "POTATO_ITEM": ["Potato", "<:potato:1042829840140750848>"],
-    "MELON": ["Melon", "<:Melon:1042829832939126854>"],
-    "PUMPKIN": ["Pumpkin", "<:Pumpkin:1042829845203255357>"],
-    "INK_SACK:3": ["Cocoa Beans", "<:CocoaBeans:1042829825141919827>"],
-    "SUGAR_CANE": ["Sugar Cane", "<:sugar_cane:1042829849456287854>"],
-    "CACTUS": ["Cactus", "<:Cactus:1042829821971025951>"],
-    "MUSHROOM_COLLECTION": ["Mushroom", "<:mushroom:1042829836894339072>"],
-    "NETHER_STALK": ["Nether Wart", "<:NetherWarts:1042829838655959050>"]
+    "WHEAT": ["Wheat", "<:Wheat:1112740232278847570>"],
+    "CARROT_ITEM": ["Carrot", "<:Carrot:1112740251371323493>"],
+    "POTATO_ITEM": ["Potato", "<:Potato:1112740239300116530>"],
+    "MELON": ["Melon", "<:Melon:1112740247017623592>"],
+    "PUMPKIN": ["Pumpkin", "<:Pumpkin:1112740237605609513>"],
+    "INK_SACK:3": ["Cocoa Beans", "<:CocoaBean:1112740248833765456>"],
+    "SUGAR_CANE": ["Sugar Cane", "<:SugarCane:1112740234422136892>"],
+    "CACTUS": ["Cactus", "<:CocoaBean:1112740248833765456>"],
+    "MUSHROOM_COLLECTION": ["Mushroom", "<:Mushroom:1112740243527966721>"],
+    "NETHER_STALK": ["Nether Wart", "<:NetherWart:1112740241732817028>"]
 }
 
 TOOL_EMOJIS = {
@@ -466,16 +466,16 @@ async def get_farming_minions(self, json):
             minion_levels[minion_type] = 0
 
     minions_string += f"""
-    <:Wheat:1042829818133217300> Wheat: **{minion_levels["WHEAT"]}**
-    <:carrot:1042829823741001798> Carrot: **{minion_levels["CARROT"]}**
-    <:potato:1042829840140750848> Potato: **{minion_levels["POTATO"]}**
-    <:Melon:1042829832939126854> Melon: **{minion_levels["MELON"]}**
-    <:Pumpkin:1042829845203255357> Pumpkin: **{minion_levels["PUMPKIN"]}**
-    <:CocoaBeans:1042829825141919827> Cocoa: **{minion_levels["COCOA"]}**
-    <:sugar_cane:1042829849456287854> Sugar Cane: **{minion_levels["SUGAR_CANE"]}**
-    <:Cactus:1042829821971025951> Cactus: **{minion_levels["CACTUS"]}**
-    <:mushroom:1042829836894339072> Mushroom: **{minion_levels["MUSHROOM"]}**
-    <:NetherWarts:1042829838655959050> Nether Wart: **{minion_levels["NETHER_WARTS"]}**
+    <:Wheat:1112740232278847570> Wheat: **{minion_levels["WHEAT"]}**
+    <:Carrot:1112740251371323493> Carrot: **{minion_levels["CARROT"]}**
+    <:Potato:1112740239300116530> Potato: **{minion_levels["POTATO"]}**
+    <:Melon:1112740247017623592> Melon: **{minion_levels["MELON"]}**
+    <:Pumpkin:1112740237605609513> Pumpkin: **{minion_levels["PUMPKIN"]}**
+    <:CocoaBean:1112740248833765456> Cocoa: **{minion_levels["COCOA"]}**
+    <:SugarCane:1112740234422136892> Sugar Cane: **{minion_levels["SUGAR_CANE"]}**
+    <:CocoaBean:1112740248833765456> Cactus: **{minion_levels["CACTUS"]}**
+    <:Mushroom:1112740243527966721> Mushroom: **{minion_levels["MUSHROOM"]}**
+    <:NetherWart:1112740241732817028> Nether Wart: **{minion_levels["NETHER_WARTS"]}**
     """
 
     return minions_string

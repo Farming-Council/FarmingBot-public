@@ -29,17 +29,17 @@ class MyView(discord.ui.View):
     async def button_callback(self, interaction, button):
         sorting = {}
         send =""
-        crops = {"ENCHANTED_CARROT": ["Carrot", 3, "<:carrot:1042829823741001798>", 4], 
-                "ENCHANTED_POTATO": ["Potato", 3, "<:potato:1042829840140750848>", 4], 
-                "ENCHANTED_NETHER_STALK": ["Nether Wart", 2.5, "<:NetherWarts:1042829838655959050>", 5], 
-                "ENCHANTED_HAY_BLOCK": ["Wheat", 1, "<:Wheat:1042829818133217300>", 6], 
-                "ENCHANTED_SUGAR": ["Sugar", 2, "<:sugar_cane:1042829849456287854>", 5], 
-                "ENCHANTED_CACTUS_GREEN": ["Cactus", 2, "<:Cactus:1042829821971025951>", 3], 
-                "ENCHANTED_COCOA": ["Cocoa", 3, "<:CocoaBeans:1042829825141919827>", 3],
-                "ENCHANTED_PUMPKIN": ["Pumpkin", 1, "<:Pumpkin:1042829845203255357>", 10],
-                "ENCHANTED_MELON": ["Melon", 5, "<:Melon:1042829832939126854>", 2],
-                "ENCHANTED_RED_MUSHROOM": ["Red Mushroom", 1, "<:mushroom:1042829836894339072>", 10],
-                "ENCHANTED_BROWN_MUSHROOM": ["Brown Mushroom", 1, "<:mushroom:1042829836894339072>", 10]
+        crops = {"ENCHANTED_CARROT": ["Carrot", 3, "<:Carrot:1112740251371323493>", 4], 
+                "ENCHANTED_POTATO": ["Potato", 3, "<:Potato:1112740239300116530>", 4], 
+                "ENCHANTED_NETHER_STALK": ["Nether Wart", 2.5, "<:NetherWart:1112740241732817028>", 5], 
+                "ENCHANTED_HAY_BLOCK": ["Wheat", 1, "<:Wheat:1112740232278847570>", 6], 
+                "ENCHANTED_SUGAR": ["Sugar", 2, "<:SugarCane:1112740234422136892>", 5], 
+                "ENCHANTED_CACTUS_GREEN": ["Cactus", 2, "<:Cactus:1112755808804024340>", 3], 
+                "ENCHANTED_COCOA": ["Cocoa", 3, "<:CocoaBean:1112740248833765456>", 3],
+                "ENCHANTED_PUMPKIN": ["Pumpkin", 1, "<:Pumpkin:1112740237605609513>", 10],
+                "ENCHANTED_MELON": ["Melon", 5, "<:Melon:1112740247017623592>", 2],
+                "ENCHANTED_RED_MUSHROOM": ["Red Mushroom", 1, "<:Mushroom:1112740243527966721>", 10],
+                "ENCHANTED_BROWN_MUSHROOM": ["Brown Mushroom", 1, "<:Mushroom:1112740243527966721>", 10]
         }
         if button.label == "Bazaar Price":
             button.label = "NPC Price"
@@ -91,17 +91,17 @@ class crops(commands.Cog):
             await interaction.response.send_message("Sorry, you cannot input farming fortunes over **1800**", ephemeral=True)
             return
         sorting = {}
-        crops = {"ENCHANTED_CARROT": ["Carrot", 3, "<:carrot:1042829823741001798>"], 
-                "ENCHANTED_POTATO": ["Potato", 3, "<:potato:1042829840140750848>"], 
-                "ENCHANTED_NETHER_STALK": ["Nether Wart", 2.5, "<:NetherWarts:1042829838655959050>"], 
-                "ENCHANTED_HAY_BLOCK": ["Wheat", 1, "<:Wheat:1042829818133217300>"], 
-                "ENCHANTED_SUGAR": ["Sugar", 2, "<:sugar_cane:1042829849456287854>"], 
-                "ENCHANTED_CACTUS_GREEN": ["Cactus", 2, "<:Cactus:1042829821971025951>"], 
-                "ENCHANTED_COCOA": ["Cocoa", 3, "<:CocoaBeans:1042829825141919827>"],
-                "ENCHANTED_PUMPKIN": ["Pumpkin", 1, "<:Pumpkin:1042829845203255357>"],
-                "ENCHANTED_MELON": ["Melon", 5, "<:Melon:1042829832939126854>"],
-                "ENCHANTED_RED_MUSHROOM": ["Red Mushroom", 1, "<:mushroom:1042829836894339072>"],
-                "ENCHANTED_BROWN_MUSHROOM": ["Brown Mushroom", 1, "<:mushroom:1042829836894339072>"]
+        crops = {"ENCHANTED_CARROT": ["Carrot", 3, "<:Carrot:1112740251371323493>", 4], 
+                "ENCHANTED_POTATO": ["Potato", 3, "<:Potato:1112740239300116530>", 4], 
+                "ENCHANTED_NETHER_STALK": ["Nether Wart", 2.5, "<:NetherWart:1112740241732817028>", 5], 
+                "ENCHANTED_HAY_BLOCK": ["Wheat", 1, "<:Wheat:1112740232278847570>", 6], 
+                "ENCHANTED_SUGAR": ["Sugar", 2, "<:SugarCane:1112740234422136892>", 5], 
+                "ENCHANTED_CACTUS_GREEN": ["Cactus", 2, "<:Cactus:1112755808804024340>", 3], 
+                "ENCHANTED_COCOA": ["Cocoa", 3, "<:CocoaBean:1112740248833765456>", 3],
+                "ENCHANTED_PUMPKIN": ["Pumpkin", 1, "<:Pumpkin:1112740237605609513>", 10],
+                "ENCHANTED_MELON": ["Melon", 5, "<:Melon:1112740247017623592>", 2],
+                "ENCHANTED_RED_MUSHROOM": ["Red Mushroom", 1, "<:Mushroom:1112740243527966721>", 10],
+                "ENCHANTED_BROWN_MUSHROOM": ["Brown Mushroom", 1, "<:Mushroom:1112740243527966721>", 10]
         }
         bazzar = await self.bot.get_bazzar_data()
         for crop in crops:
