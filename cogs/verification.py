@@ -96,12 +96,10 @@ class users(commands.Cog):
                 )
             )
         assert interaction.guild is not None
-        if profile == None:
-            profile = 0
+
         try:
             if profile == None:
                 profile = await self.bot.get_most_recent_profile(uuid)
-            await self.bot.get_skyblock_data_SLOTHPIXEL(ign, profile, uuid)
         except ProfileNotFoundError:
             return await interaction.followup.send(
                 embed=discord.Embed(
