@@ -14,7 +14,6 @@ import sys
 class errors(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        bot.tree.on_error = self.app_command_errora
         
     async def app_command_errora(self, interaction, error):
         if isinstance(error, app_commands.MissingPermissions):

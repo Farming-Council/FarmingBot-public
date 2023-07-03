@@ -145,7 +145,9 @@ class users(commands.Cog):
                     color=discord.Colour.red()
                 )
             )
-        discord_name = str(interaction.user)
+        discord_name = str(interaction.user).split('#')[0]
+        print(discord_name)
+        print(player.social_media)
         if player.social_media.discord == discord_name:
             if interaction.guild.id in [1040291074410819594,1020742260683448450]:
                 try:
@@ -200,7 +202,7 @@ class users(commands.Cog):
         await interaction.followup.send(
             embed=discord.Embed(
                 title="\U0000274c Failed",
-                description="Your Discord account is not linked to your Hypixel account.",
+                description=f"Your Discord account is not linked to your Hypixel account.\n{ign}'s Discord: {player.social_media.discord},\nYour Discord: {discord_name}",
                 colour=discord.Colour.red()
             )
         )

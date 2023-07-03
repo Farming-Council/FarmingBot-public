@@ -164,9 +164,10 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/players/{uuid}?key={self.API_KEY}"
+            f"https://slothpixel.farmingcouncil.com/api/players/{uuid}?key={self.API_KEY}"
         ) as req:
             info = await req.json()
+            print(req.status)
             if req.status != 200:
                 raise PlayerNotFoundError(uuid=uuid)
             social_media = HypixelSocialMedia.from_dict(info["links"])
@@ -223,7 +224,7 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/auctions?id={id}",
+            f"https://slothpixel.farmingcouncil.com/api/skyblock/auctions?id={id}",
             headers={"API-Key": self.API_KEY}
         ) as req:
             try:
@@ -253,7 +254,7 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/bazaar",
+            f"https://slothpixel.farmingcouncil.com/api/skyblock/bazaar",
             headers={"API-Key": self.API_KEY}
         ) as req:
             try:
@@ -412,9 +413,9 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         if profile == 0:
-            url = f"https://api.slothpixel.me/api/skyblock/profile/{uuid}"
+            url = f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{uuid}"
         else:
-            url = f"https://api.slothpixel.me/api/skyblock/profile/{ign}/{profile}"
+            url = f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{ign}/{profile}"
         async with self.session.get(
             f"{url}",
             headers={"API-Key": self.API_KEY}
@@ -439,7 +440,7 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://api.slothpixel.me/api/skyblock/profile/{uuid}?key={self.API_KEY}"
+            f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{uuid}?key={self.API_KEY}"
         ) as req:
             try:
                 info = await req.json()
@@ -451,7 +452,6 @@ class FarmingCouncil(commands.Bot):
 
             if not info:
                 raise PlayerNotFoundError(uuid=uuid)
-
             return(info["cute_name"])
         
     async def get_db_info(self,discord_id):
