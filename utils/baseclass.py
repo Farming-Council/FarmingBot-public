@@ -408,24 +408,6 @@ class FarmingCouncil(commands.Bot):
         for item in cost:
             upgradeCost += bazaar[item]["quick_status"]["sellPrice"] * cost[item]
         return upgradeCost
-            
-    async def get_skyblock_data_SLOTHPIXEL(self, ign: str, profile: str | None, uuid: str) -> HypixelPlayer:
-        if self.session is None:
-            raise ConnectionError("aiohttp session has not been set")
-        if profile == 0:
-            url = f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{uuid}"
-        else:
-            url = f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{ign}/{profile}"
-        async with self.session.get(
-            f"{url}",
-            headers={"API-Key": self.API_KEY}
-        ) as req:
-            try:
-                info = await req.json()
-            except:
-                raise HypixelIsDown()
-            return info
-        
         
     async def calculate_farming_weight(self, uuid):
         # Get profile and player data
@@ -440,7 +422,8 @@ class FarmingCouncil(commands.Bot):
         if self.session is None:
             raise ConnectionError("aiohttp session has not been set")
         async with self.session.get(
-            f"https://slothpixel.farmingcouncil.com/api/skyblock/profile/{uuid}?key={self.API_KEY}"
+            f"https://api.hypixel.net/skyblock/profiles?uuid={uuid}",
+            headers={"API-Key": self.API_KEY}
         ) as req:
             try:
                 info = await req.json()
@@ -448,11 +431,11 @@ class FarmingCouncil(commands.Bot):
                 raise HypixelIsDown()
 
             if req.status != 200:
-                raise PlayerNotFoundError(uuid=uuid)
+                raise PlayerNotFoundError(uuid=uuid)    
 
             if not info:
                 raise PlayerNotFoundError(uuid=uuid)
-            return(info["cute_name"])
+            return(info["profiles"][0]["cute_name"])
         
     async def get_db_info(self,discord_id):
         """Returns the uuid of a user from discord iffrom the database"""
